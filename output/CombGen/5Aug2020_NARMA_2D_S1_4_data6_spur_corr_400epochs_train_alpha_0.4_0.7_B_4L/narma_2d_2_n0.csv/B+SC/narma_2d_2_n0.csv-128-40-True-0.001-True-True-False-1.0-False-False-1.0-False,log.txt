@@ -1,0 +1,2288 @@
+cuda
+Namespace(action_dim=15, baseline=True, batch_size=128, copy_action=False, cuda=True, dataset='narma_2d_2_n0.csv', dec_epochs=0, decoder=False, decoder_gl=1.0, decoder_l1=1.0, dropout=0.0, embedding_dim=40, epochs=400, forecasting_M5=False, forecasting_cl=False, full=True, futureControlOnly=False, gl=1.0, hard_decoder=False, hidden_dim=512, hierarchical_ls=False, horizon=5, ignore_action=False, isControl=False, l1=1.0, layer_gl=False, layer_l1=False, learning_rate=0.001, length=11, log_interval=20, message_l1=1.0, message_pass=False, name='B+SC', no_cuda=False, nodes=2, noise=False, normalize=False, num_cont=2, num_objects=2, ood=False, pastControlOnly=False, pastStateOnly=False, pastinfo=False, path='/data/pankaj/CLTS//data/narma/combgen/6/train_test_iid_alpha_0.4_0.7/', per_node_MLP=False, pert=None, recurrent=False, save_embeddings=False, save_folder='/data/pankaj/CLTS/output/CombGen/5Aug2020_NARMA_2D_S1_4_data6_spur_corr_400epochs_train_alpha_0.4_0.7_B_4L/narma_2d_2_n0.csv', save_interval=20, save_predictions=False, seed=42, sepCTRL=True, setup=1, shift=10, shuffle=True, sigma=0.5, soft_decoder_gl=False, soft_decoder_l1=False, split=0.75, steps=1, stride=1, use_condenser=False, window_size=11)
+(7999, 2, 11)
+(1999, 2, 11)
+Data loaded!
+MVTS(
+  (control_CNN_0): CNN_Extractor_cont(
+    (dropoutlayer): Dropout(p=0.0)
+    (CNN): Sequential(
+      (0): Conv1d(1, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 1, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(1, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (control_CNN_1): CNN_Extractor_cont(
+    (dropoutlayer): Dropout(p=0.0)
+    (CNN): Sequential(
+      (0): Conv1d(1, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 1, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(1, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (state_CNN): CNN_Extractor(
+    (CNN): Sequential(
+      (0): Conv1d(2, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 2, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(2, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (state_LSTM): LSTM(11, 40)
+  (control_LSTM_0): LSTM(11, 40)
+  (control_LSTM_1): LSTM(11, 40)
+  (extract_state): Sequential(
+    (0): Linear(in_features=40, out_features=11, bias=True)
+    (1): Tanh()
+  )
+  (transition_model): Sequential(
+    (0): Linear(in_features=160, out_features=160, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=160, out_features=80, bias=True)
+    (3): Tanh()
+  )
+  (decoder): Linear(in_features=80, out_features=2, bias=True)
+  (MSE): MSELoss()
+)
+Starting model training...
+Epoch: 1 [0/5999 (0%)]	Loss: 77.185928
+Epoch: 1 [2560/5999 (43%)]	Loss: 12.090066
+saving model at:1,0.08903991824388505
+Epoch: 1 [5120/5999 (85%)]	Loss: 8.338852
+saving model at:1,0.06401910990476609
+====> Epoch: 1 Average loss: 0.119017 
+Epoch: 2 [0/5999 (0%)]	Loss: 7.916267
+Epoch: 2 [2560/5999 (43%)]	Loss: 8.129243
+saving model at:2,0.058062071442604064
+Epoch: 2 [5120/5999 (85%)]	Loss: 7.716904
+saving model at:2,0.05193922647833824
+====> Epoch: 2 Average loss: 0.058803 
+Epoch: 3 [0/5999 (0%)]	Loss: 6.096619
+Epoch: 3 [2560/5999 (43%)]	Loss: 4.101513
+saving model at:3,0.029941501379013063
+Epoch: 3 [5120/5999 (85%)]	Loss: 2.312597
+saving model at:3,0.01957707665860653
+====> Epoch: 3 Average loss: 0.031326 
+Epoch: 4 [0/5999 (0%)]	Loss: 2.399205
+Epoch: 4 [2560/5999 (43%)]	Loss: 1.819232
+saving model at:4,0.013132799081504345
+Epoch: 4 [5120/5999 (85%)]	Loss: 1.306641
+saving model at:4,0.010220102861523628
+====> Epoch: 4 Average loss: 0.013421 
+Epoch: 5 [0/5999 (0%)]	Loss: 1.182167
+Epoch: 5 [2560/5999 (43%)]	Loss: 0.961064
+saving model at:5,0.007587189644575119
+Epoch: 5 [5120/5999 (85%)]	Loss: 0.866178
+saving model at:5,0.006833376973867417
+====> Epoch: 5 Average loss: 0.007896 
+Epoch: 6 [0/5999 (0%)]	Loss: 0.826520
+Epoch: 6 [2560/5999 (43%)]	Loss: 0.771848
+saving model at:6,0.006307942721992731
+Epoch: 6 [5120/5999 (85%)]	Loss: 0.772983
+====> Epoch: 6 Average loss: 0.006556 
+Epoch: 7 [0/5999 (0%)]	Loss: 0.714580
+Epoch: 7 [2560/5999 (43%)]	Loss: 0.559647
+saving model at:7,0.004476058006286621
+Epoch: 7 [5120/5999 (85%)]	Loss: 0.536781
+====> Epoch: 7 Average loss: 0.004845 
+Epoch: 8 [0/5999 (0%)]	Loss: 0.654315
+Epoch: 8 [2560/5999 (43%)]	Loss: 0.513435
+saving model at:8,0.0036983301788568496
+Epoch: 8 [5120/5999 (85%)]	Loss: 0.445157
+saving model at:8,0.0033769900426268576
+====> Epoch: 8 Average loss: 0.003907 
+Epoch: 9 [0/5999 (0%)]	Loss: 0.500061
+Epoch: 9 [2560/5999 (43%)]	Loss: 0.588599
+Epoch: 9 [5120/5999 (85%)]	Loss: 0.413591
+saving model at:9,0.0029233760479837655
+====> Epoch: 9 Average loss: 0.003525 
+Epoch: 10 [0/5999 (0%)]	Loss: 0.374636
+Epoch: 10 [2560/5999 (43%)]	Loss: 0.430313
+saving model at:10,0.0026771676260977984
+Epoch: 10 [5120/5999 (85%)]	Loss: 0.339568
+====> Epoch: 10 Average loss: 0.003152 
+Epoch: 11 [0/5999 (0%)]	Loss: 0.351544
+Epoch: 11 [2560/5999 (43%)]	Loss: 0.355435
+saving model at:11,0.0024598886705935004
+Epoch: 11 [5120/5999 (85%)]	Loss: 0.457723
+====> Epoch: 11 Average loss: 0.002971 
+Epoch: 12 [0/5999 (0%)]	Loss: 0.321374
+Epoch: 12 [2560/5999 (43%)]	Loss: 0.291516
+Epoch: 12 [5120/5999 (85%)]	Loss: 0.283209
+saving model at:12,0.0022567332200706005
+====> Epoch: 12 Average loss: 0.002626 
+Epoch: 13 [0/5999 (0%)]	Loss: 0.311309
+Epoch: 13 [2560/5999 (43%)]	Loss: 0.322211
+saving model at:13,0.0021596535742282865
+Epoch: 13 [5120/5999 (85%)]	Loss: 0.255615
+saving model at:13,0.0018726983228698373
+====> Epoch: 13 Average loss: 0.002264 
+Epoch: 14 [0/5999 (0%)]	Loss: 0.224553
+Epoch: 14 [2560/5999 (43%)]	Loss: 0.214545
+Epoch: 14 [5120/5999 (85%)]	Loss: 0.254913
+saving model at:14,0.0017865582145750523
+====> Epoch: 14 Average loss: 0.002165 
+Epoch: 15 [0/5999 (0%)]	Loss: 0.422586
+Epoch: 15 [2560/5999 (43%)]	Loss: 0.271262
+Epoch: 15 [5120/5999 (85%)]	Loss: 0.349757
+====> Epoch: 15 Average loss: 0.002383 
+Epoch: 16 [0/5999 (0%)]	Loss: 0.213658
+Epoch: 16 [2560/5999 (43%)]	Loss: 0.214460
+Epoch: 16 [5120/5999 (85%)]	Loss: 0.198392
+saving model at:16,0.0014687072038650512
+====> Epoch: 16 Average loss: 0.002254 
+Epoch: 17 [0/5999 (0%)]	Loss: 0.197326
+Epoch: 17 [2560/5999 (43%)]	Loss: 0.207867
+saving model at:17,0.001388618708588183
+Epoch: 17 [5120/5999 (85%)]	Loss: 0.191816
+====> Epoch: 17 Average loss: 0.001664 
+Epoch: 18 [0/5999 (0%)]	Loss: 0.208985
+Epoch: 18 [2560/5999 (43%)]	Loss: 0.184888
+Epoch: 18 [5120/5999 (85%)]	Loss: 0.202903
+====> Epoch: 18 Average loss: 0.001656 
+Epoch: 19 [0/5999 (0%)]	Loss: 0.161566
+Epoch: 19 [2560/5999 (43%)]	Loss: 0.276322
+Epoch: 19 [5120/5999 (85%)]	Loss: 0.174829
+====> Epoch: 19 Average loss: 0.001750 
+Epoch: 20 [0/5999 (0%)]	Loss: 0.181075
+Epoch: 20 [2560/5999 (43%)]	Loss: 0.161532
+Epoch: 20 [5120/5999 (85%)]	Loss: 0.249263
+saving model at:20,0.00138850468210876
+====> Epoch: 20 Average loss: 0.001658 
+Epoch: 21 [0/5999 (0%)]	Loss: 0.254912
+Epoch: 21 [2560/5999 (43%)]	Loss: 0.150695
+saving model at:21,0.0011367831495590508
+Epoch: 21 [5120/5999 (85%)]	Loss: 0.170245
+====> Epoch: 21 Average loss: 0.001709 
+Epoch: 22 [0/5999 (0%)]	Loss: 0.164753
+Epoch: 22 [2560/5999 (43%)]	Loss: 0.268265
+Epoch: 22 [5120/5999 (85%)]	Loss: 0.420698
+saving model at:22,0.0011276156092062592
+====> Epoch: 22 Average loss: 0.001451 
+Epoch: 23 [0/5999 (0%)]	Loss: 0.134754
+Epoch: 23 [2560/5999 (43%)]	Loss: 0.113294
+saving model at:23,0.0009814335978589953
+Epoch: 23 [5120/5999 (85%)]	Loss: 0.145188
+saving model at:23,0.0009809255721047521
+====> Epoch: 23 Average loss: 0.001151 
+Epoch: 24 [0/5999 (0%)]	Loss: 0.147156
+Epoch: 24 [2560/5999 (43%)]	Loss: 0.116873
+saving model at:24,0.0009091078252531588
+Epoch: 24 [5120/5999 (85%)]	Loss: 0.126465
+saving model at:24,0.0008816263512708246
+====> Epoch: 24 Average loss: 0.001150 
+Epoch: 25 [0/5999 (0%)]	Loss: 0.213638
+Epoch: 25 [2560/5999 (43%)]	Loss: 0.170912
+Epoch: 25 [5120/5999 (85%)]	Loss: 0.150443
+====> Epoch: 25 Average loss: 0.001438 
+Epoch: 26 [0/5999 (0%)]	Loss: 0.186118
+Epoch: 26 [2560/5999 (43%)]	Loss: 0.182739
+Epoch: 26 [5120/5999 (85%)]	Loss: 0.121613
+====> Epoch: 26 Average loss: 0.001414 
+Epoch: 27 [0/5999 (0%)]	Loss: 0.130002
+Epoch: 27 [2560/5999 (43%)]	Loss: 0.140759
+Epoch: 27 [5120/5999 (85%)]	Loss: 0.557031
+====> Epoch: 27 Average loss: 0.001446 
+Epoch: 28 [0/5999 (0%)]	Loss: 0.147803
+Epoch: 28 [2560/5999 (43%)]	Loss: 0.181741
+saving model at:28,0.0008811398381367326
+Epoch: 28 [5120/5999 (85%)]	Loss: 0.318767
+saving model at:28,0.0008724087039008737
+====> Epoch: 28 Average loss: 0.001398 
+Epoch: 29 [0/5999 (0%)]	Loss: 0.246741
+Epoch: 29 [2560/5999 (43%)]	Loss: 0.164853
+Epoch: 29 [5120/5999 (85%)]	Loss: 0.325647
+====> Epoch: 29 Average loss: 0.001308 
+Epoch: 30 [0/5999 (0%)]	Loss: 0.156874
+Epoch: 30 [2560/5999 (43%)]	Loss: 0.121694
+Epoch: 30 [5120/5999 (85%)]	Loss: 0.179560
+saving model at:30,0.0008068559374660254
+====> Epoch: 30 Average loss: 0.001246 
+Epoch: 31 [0/5999 (0%)]	Loss: 0.216038
+Epoch: 31 [2560/5999 (43%)]	Loss: 0.140092
+Epoch: 31 [5120/5999 (85%)]	Loss: 0.104324
+saving model at:31,0.0007713422328233719
+====> Epoch: 31 Average loss: 0.001192 
+Epoch: 32 [0/5999 (0%)]	Loss: 0.127217
+Epoch: 32 [2560/5999 (43%)]	Loss: 0.094954
+saving model at:32,0.0006732592633925379
+Epoch: 32 [5120/5999 (85%)]	Loss: 0.099150
+====> Epoch: 32 Average loss: 0.001001 
+Epoch: 33 [0/5999 (0%)]	Loss: 0.081489
+Epoch: 33 [2560/5999 (43%)]	Loss: 0.112988
+Epoch: 33 [5120/5999 (85%)]	Loss: 0.103352
+====> Epoch: 33 Average loss: 0.001050 
+Epoch: 34 [0/5999 (0%)]	Loss: 0.094289
+Epoch: 34 [2560/5999 (43%)]	Loss: 0.288296
+Epoch: 34 [5120/5999 (85%)]	Loss: 0.104474
+====> Epoch: 34 Average loss: 0.000995 
+Epoch: 35 [0/5999 (0%)]	Loss: 0.153192
+Epoch: 35 [2560/5999 (43%)]	Loss: 0.095284
+Epoch: 35 [5120/5999 (85%)]	Loss: 0.089797
+saving model at:35,0.0006358246374875308
+====> Epoch: 35 Average loss: 0.001157 
+Epoch: 36 [0/5999 (0%)]	Loss: 0.240351
+Epoch: 36 [2560/5999 (43%)]	Loss: 0.094520
+Epoch: 36 [5120/5999 (85%)]	Loss: 0.145880
+====> Epoch: 36 Average loss: 0.001146 
+Epoch: 37 [0/5999 (0%)]	Loss: 0.104636
+Epoch: 37 [2560/5999 (43%)]	Loss: 0.109892
+Epoch: 37 [5120/5999 (85%)]	Loss: 0.174432
+====> Epoch: 37 Average loss: 0.000973 
+Epoch: 38 [0/5999 (0%)]	Loss: 0.136948
+Epoch: 38 [2560/5999 (43%)]	Loss: 0.152170
+Epoch: 38 [5120/5999 (85%)]	Loss: 0.114605
+====> Epoch: 38 Average loss: 0.001189 
+Epoch: 39 [0/5999 (0%)]	Loss: 0.119108
+Epoch: 39 [2560/5999 (43%)]	Loss: 0.103710
+saving model at:39,0.0005322950459085404
+Epoch: 39 [5120/5999 (85%)]	Loss: 0.136082
+====> Epoch: 39 Average loss: 0.000803 
+Epoch: 40 [0/5999 (0%)]	Loss: 0.207444
+Epoch: 40 [2560/5999 (43%)]	Loss: 0.191389
+Epoch: 40 [5120/5999 (85%)]	Loss: 0.100636
+====> Epoch: 40 Average loss: 0.000880 
+Epoch: 41 [0/5999 (0%)]	Loss: 0.111086
+Epoch: 41 [2560/5999 (43%)]	Loss: 0.078500
+Epoch: 41 [5120/5999 (85%)]	Loss: 0.074195
+====> Epoch: 41 Average loss: 0.001094 
+Epoch: 42 [0/5999 (0%)]	Loss: 0.086824
+Epoch: 42 [2560/5999 (43%)]	Loss: 0.068044
+saving model at:42,0.0004970659844111651
+Epoch: 42 [5120/5999 (85%)]	Loss: 0.064367
+====> Epoch: 42 Average loss: 0.000857 
+Epoch: 43 [0/5999 (0%)]	Loss: 0.077090
+Epoch: 43 [2560/5999 (43%)]	Loss: 0.100163
+Epoch: 43 [5120/5999 (85%)]	Loss: 0.110618
+====> Epoch: 43 Average loss: 0.000896 
+Epoch: 44 [0/5999 (0%)]	Loss: 0.085778
+Epoch: 44 [2560/5999 (43%)]	Loss: 0.129118
+Epoch: 44 [5120/5999 (85%)]	Loss: 0.115523
+====> Epoch: 44 Average loss: 0.000968 
+Epoch: 45 [0/5999 (0%)]	Loss: 0.124405
+Epoch: 45 [2560/5999 (43%)]	Loss: 0.114480
+Epoch: 45 [5120/5999 (85%)]	Loss: 0.079519
+====> Epoch: 45 Average loss: 0.000868 
+Epoch: 46 [0/5999 (0%)]	Loss: 0.111770
+Epoch: 46 [2560/5999 (43%)]	Loss: 0.113710
+Epoch: 46 [5120/5999 (85%)]	Loss: 0.161628
+====> Epoch: 46 Average loss: 0.000945 
+Epoch: 47 [0/5999 (0%)]	Loss: 0.136865
+Epoch: 47 [2560/5999 (43%)]	Loss: 0.084325
+Epoch: 47 [5120/5999 (85%)]	Loss: 0.093442
+saving model at:47,0.0004869668451137841
+====> Epoch: 47 Average loss: 0.000958 
+Epoch: 48 [0/5999 (0%)]	Loss: 0.072112
+Epoch: 48 [2560/5999 (43%)]	Loss: 0.100746
+Epoch: 48 [5120/5999 (85%)]	Loss: 0.081987
+====> Epoch: 48 Average loss: 0.000987 
+Epoch: 49 [0/5999 (0%)]	Loss: 0.084464
+Epoch: 49 [2560/5999 (43%)]	Loss: 0.189183
+Epoch: 49 [5120/5999 (85%)]	Loss: 0.152817
+saving model at:49,0.00045341055700555443
+====> Epoch: 49 Average loss: 0.000766 
+Epoch: 50 [0/5999 (0%)]	Loss: 0.272453
+Epoch: 50 [2560/5999 (43%)]	Loss: 0.153890
+Epoch: 50 [5120/5999 (85%)]	Loss: 0.157193
+====> Epoch: 50 Average loss: 0.001309 
+Epoch: 51 [0/5999 (0%)]	Loss: 0.075972
+Epoch: 51 [2560/5999 (43%)]	Loss: 0.077472
+Epoch: 51 [5120/5999 (85%)]	Loss: 0.205526
+====> Epoch: 51 Average loss: 0.000874 
+Epoch: 52 [0/5999 (0%)]	Loss: 0.146465
+Epoch: 52 [2560/5999 (43%)]	Loss: 0.058735
+Epoch: 52 [5120/5999 (85%)]	Loss: 0.091237
+====> Epoch: 52 Average loss: 0.000904 
+Epoch: 53 [0/5999 (0%)]	Loss: 0.061684
+Epoch: 53 [2560/5999 (43%)]	Loss: 0.113631
+Epoch: 53 [5120/5999 (85%)]	Loss: 0.073337
+====> Epoch: 53 Average loss: 0.001005 
+Epoch: 54 [0/5999 (0%)]	Loss: 0.064269
+Epoch: 54 [2560/5999 (43%)]	Loss: 0.065296
+saving model at:54,0.0004301974175032228
+Epoch: 54 [5120/5999 (85%)]	Loss: 0.145863
+====> Epoch: 54 Average loss: 0.000756 
+Epoch: 55 [0/5999 (0%)]	Loss: 0.307783
+Epoch: 55 [2560/5999 (43%)]	Loss: 0.482784
+Epoch: 55 [5120/5999 (85%)]	Loss: 0.261437
+====> Epoch: 55 Average loss: 0.001337 
+Epoch: 56 [0/5999 (0%)]	Loss: 0.237368
+Epoch: 56 [2560/5999 (43%)]	Loss: 0.085256
+Epoch: 56 [5120/5999 (85%)]	Loss: 0.120810
+====> Epoch: 56 Average loss: 0.000942 
+Epoch: 57 [0/5999 (0%)]	Loss: 0.125684
+Epoch: 57 [2560/5999 (43%)]	Loss: 0.150003
+Epoch: 57 [5120/5999 (85%)]	Loss: 0.187589
+====> Epoch: 57 Average loss: 0.000935 
+Epoch: 58 [0/5999 (0%)]	Loss: 0.391575
+Epoch: 58 [2560/5999 (43%)]	Loss: 0.082818
+Epoch: 58 [5120/5999 (85%)]	Loss: 0.063905
+====> Epoch: 58 Average loss: 0.000815 
+Epoch: 59 [0/5999 (0%)]	Loss: 0.068441
+Epoch: 59 [2560/5999 (43%)]	Loss: 0.058362
+saving model at:59,0.0004162608771584928
+Epoch: 59 [5120/5999 (85%)]	Loss: 0.132881
+====> Epoch: 59 Average loss: 0.000818 
+Epoch: 60 [0/5999 (0%)]	Loss: 0.058010
+Epoch: 60 [2560/5999 (43%)]	Loss: 0.072908
+Epoch: 60 [5120/5999 (85%)]	Loss: 0.198239
+====> Epoch: 60 Average loss: 0.000835 
+Epoch: 61 [0/5999 (0%)]	Loss: 0.133987
+Epoch: 61 [2560/5999 (43%)]	Loss: 0.064186
+saving model at:61,0.00038592169201001527
+Epoch: 61 [5120/5999 (85%)]	Loss: 0.070316
+====> Epoch: 61 Average loss: 0.000768 
+Epoch: 62 [0/5999 (0%)]	Loss: 0.058657
+Epoch: 62 [2560/5999 (43%)]	Loss: 0.051621
+Epoch: 62 [5120/5999 (85%)]	Loss: 0.155939
+====> Epoch: 62 Average loss: 0.000673 
+Epoch: 63 [0/5999 (0%)]	Loss: 0.075124
+Epoch: 63 [2560/5999 (43%)]	Loss: 0.052162
+Epoch: 63 [5120/5999 (85%)]	Loss: 0.059582
+saving model at:63,0.0003679265854880214
+====> Epoch: 63 Average loss: 0.000674 
+Epoch: 64 [0/5999 (0%)]	Loss: 0.067785
+Epoch: 64 [2560/5999 (43%)]	Loss: 0.053975
+Epoch: 64 [5120/5999 (85%)]	Loss: 0.125969
+saving model at:64,0.0003526380679104477
+====> Epoch: 64 Average loss: 0.000648 
+Epoch: 65 [0/5999 (0%)]	Loss: 0.352584
+Epoch: 65 [2560/5999 (43%)]	Loss: 0.058183
+Epoch: 65 [5120/5999 (85%)]	Loss: 0.064415
+====> Epoch: 65 Average loss: 0.000931 
+Epoch: 66 [0/5999 (0%)]	Loss: 0.080915
+Epoch: 66 [2560/5999 (43%)]	Loss: 0.071876
+Epoch: 66 [5120/5999 (85%)]	Loss: 0.156797
+====> Epoch: 66 Average loss: 0.000895 
+Epoch: 67 [0/5999 (0%)]	Loss: 0.092915
+Epoch: 67 [2560/5999 (43%)]	Loss: 0.086657
+Epoch: 67 [5120/5999 (85%)]	Loss: 0.100354
+====> Epoch: 67 Average loss: 0.000800 
+Epoch: 68 [0/5999 (0%)]	Loss: 0.068374
+Epoch: 68 [2560/5999 (43%)]	Loss: 0.115214
+Epoch: 68 [5120/5999 (85%)]	Loss: 0.066181
+====> Epoch: 68 Average loss: 0.000709 
+Epoch: 69 [0/5999 (0%)]	Loss: 0.041314
+Epoch: 69 [2560/5999 (43%)]	Loss: 0.073547
+Epoch: 69 [5120/5999 (85%)]	Loss: 0.116314
+====> Epoch: 69 Average loss: 0.001019 
+Epoch: 70 [0/5999 (0%)]	Loss: 0.252137
+Epoch: 70 [2560/5999 (43%)]	Loss: 0.092983
+Epoch: 70 [5120/5999 (85%)]	Loss: 0.056926
+====> Epoch: 70 Average loss: 0.000984 
+Epoch: 71 [0/5999 (0%)]	Loss: 0.086755
+Epoch: 71 [2560/5999 (43%)]	Loss: 0.063698
+saving model at:71,0.0003433798849582672
+Epoch: 71 [5120/5999 (85%)]	Loss: 0.073426
+saving model at:71,0.00034101616870611904
+====> Epoch: 71 Average loss: 0.000542 
+Epoch: 72 [0/5999 (0%)]	Loss: 0.052980
+Epoch: 72 [2560/5999 (43%)]	Loss: 0.111692
+Epoch: 72 [5120/5999 (85%)]	Loss: 0.050394
+====> Epoch: 72 Average loss: 0.000767 
+Epoch: 73 [0/5999 (0%)]	Loss: 0.081866
+Epoch: 73 [2560/5999 (43%)]	Loss: 0.133603
+Epoch: 73 [5120/5999 (85%)]	Loss: 0.049036
+====> Epoch: 73 Average loss: 0.000663 
+Epoch: 74 [0/5999 (0%)]	Loss: 0.076262
+Epoch: 74 [2560/5999 (43%)]	Loss: 0.199546
+Epoch: 74 [5120/5999 (85%)]	Loss: 0.068556
+====> Epoch: 74 Average loss: 0.000936 
+Epoch: 75 [0/5999 (0%)]	Loss: 0.044411
+Epoch: 75 [2560/5999 (43%)]	Loss: 0.048886
+saving model at:75,0.00029565509129315617
+Epoch: 75 [5120/5999 (85%)]	Loss: 0.054731
+====> Epoch: 75 Average loss: 0.000631 
+Epoch: 76 [0/5999 (0%)]	Loss: 0.049873
+Epoch: 76 [2560/5999 (43%)]	Loss: 0.131282
+Epoch: 76 [5120/5999 (85%)]	Loss: 0.081068
+====> Epoch: 76 Average loss: 0.000816 
+Epoch: 77 [0/5999 (0%)]	Loss: 0.154305
+Epoch: 77 [2560/5999 (43%)]	Loss: 0.081388
+Epoch: 77 [5120/5999 (85%)]	Loss: 0.066834
+====> Epoch: 77 Average loss: 0.000571 
+Epoch: 78 [0/5999 (0%)]	Loss: 0.089146
+Epoch: 78 [2560/5999 (43%)]	Loss: 0.068766
+Epoch: 78 [5120/5999 (85%)]	Loss: 0.070791
+====> Epoch: 78 Average loss: 0.000880 
+Epoch: 79 [0/5999 (0%)]	Loss: 0.040432
+Epoch: 79 [2560/5999 (43%)]	Loss: 0.070159
+Epoch: 79 [5120/5999 (85%)]	Loss: 0.067212
+====> Epoch: 79 Average loss: 0.000647 
+Epoch: 80 [0/5999 (0%)]	Loss: 0.040556
+Epoch: 80 [2560/5999 (43%)]	Loss: 0.045230
+Epoch: 80 [5120/5999 (85%)]	Loss: 0.197833
+====> Epoch: 80 Average loss: 0.000698 
+Epoch: 81 [0/5999 (0%)]	Loss: 0.079478
+Epoch: 81 [2560/5999 (43%)]	Loss: 0.058152
+Epoch: 81 [5120/5999 (85%)]	Loss: 0.309301
+====> Epoch: 81 Average loss: 0.000670 
+Epoch: 82 [0/5999 (0%)]	Loss: 0.065106
+Epoch: 82 [2560/5999 (43%)]	Loss: 0.090671
+Epoch: 82 [5120/5999 (85%)]	Loss: 0.112735
+====> Epoch: 82 Average loss: 0.000680 
+Epoch: 83 [0/5999 (0%)]	Loss: 0.080541
+Epoch: 83 [2560/5999 (43%)]	Loss: 0.051210
+saving model at:83,0.00028966616513207555
+Epoch: 83 [5120/5999 (85%)]	Loss: 0.053577
+====> Epoch: 83 Average loss: 0.000560 
+Epoch: 84 [0/5999 (0%)]	Loss: 0.232068
+Epoch: 84 [2560/5999 (43%)]	Loss: 0.068166
+Epoch: 84 [5120/5999 (85%)]	Loss: 0.046783
+====> Epoch: 84 Average loss: 0.000576 
+Epoch: 85 [0/5999 (0%)]	Loss: 0.046284
+Epoch: 85 [2560/5999 (43%)]	Loss: 0.066663
+Epoch: 85 [5120/5999 (85%)]	Loss: 0.073404
+saving model at:85,0.0002604033122770488
+====> Epoch: 85 Average loss: 0.000509 
+Epoch: 86 [0/5999 (0%)]	Loss: 0.044273
+Epoch: 86 [2560/5999 (43%)]	Loss: 0.040755
+Epoch: 86 [5120/5999 (85%)]	Loss: 0.078019
+====> Epoch: 86 Average loss: 0.000429 
+Epoch: 87 [0/5999 (0%)]	Loss: 0.108623
+Epoch: 87 [2560/5999 (43%)]	Loss: 0.039894
+Epoch: 87 [5120/5999 (85%)]	Loss: 0.088882
+====> Epoch: 87 Average loss: 0.000718 
+Epoch: 88 [0/5999 (0%)]	Loss: 0.263478
+Epoch: 88 [2560/5999 (43%)]	Loss: 0.107816
+Epoch: 88 [5120/5999 (85%)]	Loss: 0.055991
+====> Epoch: 88 Average loss: 0.000872 
+Epoch: 89 [0/5999 (0%)]	Loss: 0.053701
+Epoch: 89 [2560/5999 (43%)]	Loss: 0.072824
+Epoch: 89 [5120/5999 (85%)]	Loss: 0.071801
+====> Epoch: 89 Average loss: 0.000552 
+Epoch: 90 [0/5999 (0%)]	Loss: 0.115406
+Epoch: 90 [2560/5999 (43%)]	Loss: 0.196650
+Epoch: 90 [5120/5999 (85%)]	Loss: 0.333695
+====> Epoch: 90 Average loss: 0.000736 
+Epoch: 91 [0/5999 (0%)]	Loss: 0.095604
+Epoch: 91 [2560/5999 (43%)]	Loss: 0.100683
+Epoch: 91 [5120/5999 (85%)]	Loss: 0.053170
+====> Epoch: 91 Average loss: 0.000567 
+Epoch: 92 [0/5999 (0%)]	Loss: 0.184082
+Epoch: 92 [2560/5999 (43%)]	Loss: 0.069626
+Epoch: 92 [5120/5999 (85%)]	Loss: 0.062867
+====> Epoch: 92 Average loss: 0.000476 
+Epoch: 93 [0/5999 (0%)]	Loss: 0.041391
+Epoch: 93 [2560/5999 (43%)]	Loss: 0.053822
+Epoch: 93 [5120/5999 (85%)]	Loss: 0.038530
+====> Epoch: 93 Average loss: 0.000554 
+Epoch: 94 [0/5999 (0%)]	Loss: 0.106978
+Epoch: 94 [2560/5999 (43%)]	Loss: 0.074107
+Epoch: 94 [5120/5999 (85%)]	Loss: 0.049650
+====> Epoch: 94 Average loss: 0.000723 
+Epoch: 95 [0/5999 (0%)]	Loss: 0.045484
+Epoch: 95 [2560/5999 (43%)]	Loss: 0.053443
+Epoch: 95 [5120/5999 (85%)]	Loss: 0.042654
+====> Epoch: 95 Average loss: 0.000513 
+Epoch: 96 [0/5999 (0%)]	Loss: 0.064917
+Epoch: 96 [2560/5999 (43%)]	Loss: 0.045025
+Epoch: 96 [5120/5999 (85%)]	Loss: 0.120286
+====> Epoch: 96 Average loss: 0.000655 
+Epoch: 97 [0/5999 (0%)]	Loss: 0.101950
+Epoch: 97 [2560/5999 (43%)]	Loss: 0.102847
+Epoch: 97 [5120/5999 (85%)]	Loss: 0.087451
+====> Epoch: 97 Average loss: 0.000785 
+Epoch: 98 [0/5999 (0%)]	Loss: 0.068377
+Epoch: 98 [2560/5999 (43%)]	Loss: 0.045412
+Epoch: 98 [5120/5999 (85%)]	Loss: 0.116144
+====> Epoch: 98 Average loss: 0.000587 
+Epoch: 99 [0/5999 (0%)]	Loss: 0.126756
+Epoch: 99 [2560/5999 (43%)]	Loss: 0.043920
+Epoch: 99 [5120/5999 (85%)]	Loss: 0.046107
+saving model at:99,0.00022221339121460915
+====> Epoch: 99 Average loss: 0.000548 
+Epoch: 100 [0/5999 (0%)]	Loss: 0.051614
+Epoch: 100 [2560/5999 (43%)]	Loss: 0.051733
+Epoch: 100 [5120/5999 (85%)]	Loss: 0.149993
+====> Epoch: 100 Average loss: 0.000505 
+Epoch: 101 [0/5999 (0%)]	Loss: 0.029513
+Epoch: 101 [2560/5999 (43%)]	Loss: 0.034448
+Epoch: 101 [5120/5999 (85%)]	Loss: 0.133991
+====> Epoch: 101 Average loss: 0.000807 
+Epoch: 102 [0/5999 (0%)]	Loss: 0.095268
+Epoch: 102 [2560/5999 (43%)]	Loss: 0.281340
+Epoch: 102 [5120/5999 (85%)]	Loss: 0.116112
+====> Epoch: 102 Average loss: 0.000940 
+Epoch: 103 [0/5999 (0%)]	Loss: 0.080380
+Epoch: 103 [2560/5999 (43%)]	Loss: 0.044521
+Epoch: 103 [5120/5999 (85%)]	Loss: 0.087826
+====> Epoch: 103 Average loss: 0.000665 
+Epoch: 104 [0/5999 (0%)]	Loss: 0.105353
+Epoch: 104 [2560/5999 (43%)]	Loss: 0.074393
+Epoch: 104 [5120/5999 (85%)]	Loss: 0.339682
+====> Epoch: 104 Average loss: 0.000552 
+Epoch: 105 [0/5999 (0%)]	Loss: 0.085508
+Epoch: 105 [2560/5999 (43%)]	Loss: 0.060131
+Epoch: 105 [5120/5999 (85%)]	Loss: 0.059775
+====> Epoch: 105 Average loss: 0.000851 
+Epoch: 106 [0/5999 (0%)]	Loss: 0.126529
+Epoch: 106 [2560/5999 (43%)]	Loss: 0.052581
+Epoch: 106 [5120/5999 (85%)]	Loss: 0.094605
+====> Epoch: 106 Average loss: 0.000570 
+Epoch: 107 [0/5999 (0%)]	Loss: 0.040286
+Epoch: 107 [2560/5999 (43%)]	Loss: 0.088005
+Epoch: 107 [5120/5999 (85%)]	Loss: 0.073298
+====> Epoch: 107 Average loss: 0.000609 
+Epoch: 108 [0/5999 (0%)]	Loss: 0.031322
+Epoch: 108 [2560/5999 (43%)]	Loss: 0.046454
+Epoch: 108 [5120/5999 (85%)]	Loss: 0.030010
+saving model at:108,0.00019978729961439966
+====> Epoch: 108 Average loss: 0.000402 
+Epoch: 109 [0/5999 (0%)]	Loss: 0.131234
+Epoch: 109 [2560/5999 (43%)]	Loss: 0.143213
+Epoch: 109 [5120/5999 (85%)]	Loss: 0.065304
+====> Epoch: 109 Average loss: 0.000793 
+Epoch: 110 [0/5999 (0%)]	Loss: 0.066515
+Epoch: 110 [2560/5999 (43%)]	Loss: 0.050649
+Epoch: 110 [5120/5999 (85%)]	Loss: 0.098288
+====> Epoch: 110 Average loss: 0.000559 
+Epoch: 111 [0/5999 (0%)]	Loss: 0.051837
+Epoch: 111 [2560/5999 (43%)]	Loss: 0.058827
+Epoch: 111 [5120/5999 (85%)]	Loss: 0.022681
+saving model at:111,0.0001963239189935848
+====> Epoch: 111 Average loss: 0.000485 
+Epoch: 112 [0/5999 (0%)]	Loss: 0.025295
+Epoch: 112 [2560/5999 (43%)]	Loss: 0.038799
+Epoch: 112 [5120/5999 (85%)]	Loss: 0.037854
+====> Epoch: 112 Average loss: 0.000541 
+Epoch: 113 [0/5999 (0%)]	Loss: 0.033369
+Epoch: 113 [2560/5999 (43%)]	Loss: 0.071118
+Epoch: 113 [5120/5999 (85%)]	Loss: 0.035727
+====> Epoch: 113 Average loss: 0.000493 
+Epoch: 114 [0/5999 (0%)]	Loss: 0.028975
+Epoch: 114 [2560/5999 (43%)]	Loss: 0.069229
+Epoch: 114 [5120/5999 (85%)]	Loss: 0.109490
+====> Epoch: 114 Average loss: 0.000687 
+Epoch: 115 [0/5999 (0%)]	Loss: 0.106043
+Epoch: 115 [2560/5999 (43%)]	Loss: 0.102963
+Epoch: 115 [5120/5999 (85%)]	Loss: 0.095943
+====> Epoch: 115 Average loss: 0.000680 
+Epoch: 116 [0/5999 (0%)]	Loss: 0.156684
+Epoch: 116 [2560/5999 (43%)]	Loss: 0.048623
+Epoch: 116 [5120/5999 (85%)]	Loss: 0.035167
+====> Epoch: 116 Average loss: 0.000459 
+Epoch: 117 [0/5999 (0%)]	Loss: 0.030954
+Epoch: 117 [2560/5999 (43%)]	Loss: 0.091857
+Epoch: 117 [5120/5999 (85%)]	Loss: 0.071385
+====> Epoch: 117 Average loss: 0.000488 
+Epoch: 118 [0/5999 (0%)]	Loss: 0.078794
+Epoch: 118 [2560/5999 (43%)]	Loss: 0.087639
+Epoch: 118 [5120/5999 (85%)]	Loss: 0.102327
+====> Epoch: 118 Average loss: 0.000465 
+Epoch: 119 [0/5999 (0%)]	Loss: 0.030597
+Epoch: 119 [2560/5999 (43%)]	Loss: 0.126052
+Epoch: 119 [5120/5999 (85%)]	Loss: 0.041664
+saving model at:119,0.0001816014291252941
+====> Epoch: 119 Average loss: 0.000405 
+Epoch: 120 [0/5999 (0%)]	Loss: 0.081484
+Epoch: 120 [2560/5999 (43%)]	Loss: 0.036408
+Epoch: 120 [5120/5999 (85%)]	Loss: 0.110785
+====> Epoch: 120 Average loss: 0.000587 
+Epoch: 121 [0/5999 (0%)]	Loss: 0.034745
+Epoch: 121 [2560/5999 (43%)]	Loss: 0.031515
+Epoch: 121 [5120/5999 (85%)]	Loss: 0.026760
+====> Epoch: 121 Average loss: 0.000583 
+Epoch: 122 [0/5999 (0%)]	Loss: 0.035262
+Epoch: 122 [2560/5999 (43%)]	Loss: 0.047687
+Epoch: 122 [5120/5999 (85%)]	Loss: 0.254615
+====> Epoch: 122 Average loss: 0.000774 
+Epoch: 123 [0/5999 (0%)]	Loss: 0.066970
+Epoch: 123 [2560/5999 (43%)]	Loss: 0.045578
+Epoch: 123 [5120/5999 (85%)]	Loss: 0.050549
+====> Epoch: 123 Average loss: 0.000660 
+Epoch: 124 [0/5999 (0%)]	Loss: 0.155106
+Epoch: 124 [2560/5999 (43%)]	Loss: 0.054383
+Epoch: 124 [5120/5999 (85%)]	Loss: 0.047341
+====> Epoch: 124 Average loss: 0.000986 
+Epoch: 125 [0/5999 (0%)]	Loss: 0.038595
+Epoch: 125 [2560/5999 (43%)]	Loss: 0.076656
+Epoch: 125 [5120/5999 (85%)]	Loss: 0.171634
+====> Epoch: 125 Average loss: 0.000485 
+Epoch: 126 [0/5999 (0%)]	Loss: 0.194286
+Epoch: 126 [2560/5999 (43%)]	Loss: 0.053462
+Epoch: 126 [5120/5999 (85%)]	Loss: 0.036807
+====> Epoch: 126 Average loss: 0.000657 
+Epoch: 127 [0/5999 (0%)]	Loss: 0.134660
+Epoch: 127 [2560/5999 (43%)]	Loss: 0.029876
+Epoch: 127 [5120/5999 (85%)]	Loss: 0.034765
+====> Epoch: 127 Average loss: 0.000495 
+Epoch: 128 [0/5999 (0%)]	Loss: 0.036415
+Epoch: 128 [2560/5999 (43%)]	Loss: 0.030832
+Epoch: 128 [5120/5999 (85%)]	Loss: 0.049448
+====> Epoch: 128 Average loss: 0.000391 
+Epoch: 129 [0/5999 (0%)]	Loss: 0.035614
+Epoch: 129 [2560/5999 (43%)]	Loss: 0.022592
+Epoch: 129 [5120/5999 (85%)]	Loss: 0.035371
+====> Epoch: 129 Average loss: 0.000580 
+Epoch: 130 [0/5999 (0%)]	Loss: 0.040182
+Epoch: 130 [2560/5999 (43%)]	Loss: 0.063764
+Epoch: 130 [5120/5999 (85%)]	Loss: 0.112226
+====> Epoch: 130 Average loss: 0.000588 
+Epoch: 131 [0/5999 (0%)]	Loss: 0.054763
+Epoch: 131 [2560/5999 (43%)]	Loss: 0.027473
+Epoch: 131 [5120/5999 (85%)]	Loss: 0.039121
+====> Epoch: 131 Average loss: 0.000464 
+Epoch: 132 [0/5999 (0%)]	Loss: 0.047568
+Epoch: 132 [2560/5999 (43%)]	Loss: 0.028753
+Epoch: 132 [5120/5999 (85%)]	Loss: 0.092606
+====> Epoch: 132 Average loss: 0.000530 
+Epoch: 133 [0/5999 (0%)]	Loss: 0.019144
+Epoch: 133 [2560/5999 (43%)]	Loss: 0.077997
+Epoch: 133 [5120/5999 (85%)]	Loss: 0.104701
+====> Epoch: 133 Average loss: 0.000590 
+Epoch: 134 [0/5999 (0%)]	Loss: 0.126446
+Epoch: 134 [2560/5999 (43%)]	Loss: 0.112994
+Epoch: 134 [5120/5999 (85%)]	Loss: 0.101433
+====> Epoch: 134 Average loss: 0.000491 
+Epoch: 135 [0/5999 (0%)]	Loss: 0.029518
+Epoch: 135 [2560/5999 (43%)]	Loss: 0.019745
+saving model at:135,0.0001652063726214692
+Epoch: 135 [5120/5999 (85%)]	Loss: 0.053947
+saving model at:135,0.0001494712927378714
+====> Epoch: 135 Average loss: 0.000338 
+Epoch: 136 [0/5999 (0%)]	Loss: 0.024381
+Epoch: 136 [2560/5999 (43%)]	Loss: 0.098394
+Epoch: 136 [5120/5999 (85%)]	Loss: 0.064834
+====> Epoch: 136 Average loss: 0.000646 
+Epoch: 137 [0/5999 (0%)]	Loss: 0.108310
+Epoch: 137 [2560/5999 (43%)]	Loss: 0.089731
+Epoch: 137 [5120/5999 (85%)]	Loss: 0.190494
+====> Epoch: 137 Average loss: 0.000791 
+Epoch: 138 [0/5999 (0%)]	Loss: 0.063832
+Epoch: 138 [2560/5999 (43%)]	Loss: 0.039945
+Epoch: 138 [5120/5999 (85%)]	Loss: 0.067619
+====> Epoch: 138 Average loss: 0.000473 
+Epoch: 139 [0/5999 (0%)]	Loss: 0.027973
+Epoch: 139 [2560/5999 (43%)]	Loss: 0.069777
+Epoch: 139 [5120/5999 (85%)]	Loss: 0.025257
+====> Epoch: 139 Average loss: 0.000460 
+Epoch: 140 [0/5999 (0%)]	Loss: 0.023994
+Epoch: 140 [2560/5999 (43%)]	Loss: 0.040084
+Epoch: 140 [5120/5999 (85%)]	Loss: 0.048607
+====> Epoch: 140 Average loss: 0.000590 
+Epoch: 141 [0/5999 (0%)]	Loss: 0.143129
+Epoch: 141 [2560/5999 (43%)]	Loss: 0.021742
+Epoch: 141 [5120/5999 (85%)]	Loss: 0.032136
+====> Epoch: 141 Average loss: 0.000437 
+Epoch: 142 [0/5999 (0%)]	Loss: 0.052569
+Epoch: 142 [2560/5999 (43%)]	Loss: 0.033936
+Epoch: 142 [5120/5999 (85%)]	Loss: 0.025299
+====> Epoch: 142 Average loss: 0.000446 
+Epoch: 143 [0/5999 (0%)]	Loss: 0.054413
+Epoch: 143 [2560/5999 (43%)]	Loss: 0.059290
+Epoch: 143 [5120/5999 (85%)]	Loss: 0.042564
+====> Epoch: 143 Average loss: 0.000428 
+Epoch: 144 [0/5999 (0%)]	Loss: 0.026120
+Epoch: 144 [2560/5999 (43%)]	Loss: 0.034615
+Epoch: 144 [5120/5999 (85%)]	Loss: 0.076098
+====> Epoch: 144 Average loss: 0.000436 
+Epoch: 145 [0/5999 (0%)]	Loss: 0.036091
+Epoch: 145 [2560/5999 (43%)]	Loss: 0.182760
+Epoch: 145 [5120/5999 (85%)]	Loss: 0.023751
+saving model at:145,0.00014485797908855602
+====> Epoch: 145 Average loss: 0.000365 
+Epoch: 146 [0/5999 (0%)]	Loss: 0.028626
+Epoch: 146 [2560/5999 (43%)]	Loss: 0.126728
+Epoch: 146 [5120/5999 (85%)]	Loss: 0.036507
+====> Epoch: 146 Average loss: 0.000818 
+Epoch: 147 [0/5999 (0%)]	Loss: 0.052809
+Epoch: 147 [2560/5999 (43%)]	Loss: 0.025233
+Epoch: 147 [5120/5999 (85%)]	Loss: 0.036409
+saving model at:147,0.00014371750876307487
+====> Epoch: 147 Average loss: 0.000318 
+Epoch: 148 [0/5999 (0%)]	Loss: 0.035816
+Epoch: 148 [2560/5999 (43%)]	Loss: 0.070648
+Epoch: 148 [5120/5999 (85%)]	Loss: 0.092532
+====> Epoch: 148 Average loss: 0.000890 
+Epoch: 149 [0/5999 (0%)]	Loss: 0.054465
+Epoch: 149 [2560/5999 (43%)]	Loss: 0.028128
+Epoch: 149 [5120/5999 (85%)]	Loss: 0.061472
+====> Epoch: 149 Average loss: 0.000724 
+Epoch: 150 [0/5999 (0%)]	Loss: 0.074709
+Epoch: 150 [2560/5999 (43%)]	Loss: 0.108764
+Epoch: 150 [5120/5999 (85%)]	Loss: 0.048624
+====> Epoch: 150 Average loss: 0.000472 
+Epoch: 151 [0/5999 (0%)]	Loss: 0.025028
+Epoch: 151 [2560/5999 (43%)]	Loss: 0.031337
+Epoch: 151 [5120/5999 (85%)]	Loss: 0.046198
+====> Epoch: 151 Average loss: 0.000431 
+Epoch: 152 [0/5999 (0%)]	Loss: 0.115878
+Epoch: 152 [2560/5999 (43%)]	Loss: 0.106726
+Epoch: 152 [5120/5999 (85%)]	Loss: 0.038965
+====> Epoch: 152 Average loss: 0.000435 
+Epoch: 153 [0/5999 (0%)]	Loss: 0.042468
+Epoch: 153 [2560/5999 (43%)]	Loss: 0.051064
+Epoch: 153 [5120/5999 (85%)]	Loss: 0.051492
+saving model at:153,0.00014368817582726477
+====> Epoch: 153 Average loss: 0.000474 
+Epoch: 154 [0/5999 (0%)]	Loss: 0.047974
+Epoch: 154 [2560/5999 (43%)]	Loss: 0.022216
+Epoch: 154 [5120/5999 (85%)]	Loss: 0.082459
+====> Epoch: 154 Average loss: 0.000528 
+Epoch: 155 [0/5999 (0%)]	Loss: 0.076755
+Epoch: 155 [2560/5999 (43%)]	Loss: 0.057959
+Epoch: 155 [5120/5999 (85%)]	Loss: 0.046798
+====> Epoch: 155 Average loss: 0.000495 
+Epoch: 156 [0/5999 (0%)]	Loss: 0.021956
+Epoch: 156 [2560/5999 (43%)]	Loss: 0.033189
+Epoch: 156 [5120/5999 (85%)]	Loss: 0.086207
+====> Epoch: 156 Average loss: 0.000621 
+Epoch: 157 [0/5999 (0%)]	Loss: 0.068269
+Epoch: 157 [2560/5999 (43%)]	Loss: 0.048804
+Epoch: 157 [5120/5999 (85%)]	Loss: 0.018073
+saving model at:157,0.00012874582211952658
+====> Epoch: 157 Average loss: 0.000418 
+Epoch: 158 [0/5999 (0%)]	Loss: 0.052130
+Epoch: 158 [2560/5999 (43%)]	Loss: 0.025442
+Epoch: 158 [5120/5999 (85%)]	Loss: 0.039558
+====> Epoch: 158 Average loss: 0.000368 
+Epoch: 159 [0/5999 (0%)]	Loss: 0.050438
+Epoch: 159 [2560/5999 (43%)]	Loss: 0.020147
+Epoch: 159 [5120/5999 (85%)]	Loss: 0.085574
+====> Epoch: 159 Average loss: 0.000389 
+Epoch: 160 [0/5999 (0%)]	Loss: 0.042943
+Epoch: 160 [2560/5999 (43%)]	Loss: 0.031469
+Epoch: 160 [5120/5999 (85%)]	Loss: 0.055929
+====> Epoch: 160 Average loss: 0.000582 
+Epoch: 161 [0/5999 (0%)]	Loss: 0.060439
+Epoch: 161 [2560/5999 (43%)]	Loss: 0.018731
+Epoch: 161 [5120/5999 (85%)]	Loss: 0.081978
+====> Epoch: 161 Average loss: 0.000464 
+Epoch: 162 [0/5999 (0%)]	Loss: 0.038674
+Epoch: 162 [2560/5999 (43%)]	Loss: 0.055459
+Epoch: 162 [5120/5999 (85%)]	Loss: 0.027777
+====> Epoch: 162 Average loss: 0.000347 
+Epoch: 163 [0/5999 (0%)]	Loss: 0.040561
+Epoch: 163 [2560/5999 (43%)]	Loss: 0.041939
+Epoch: 163 [5120/5999 (85%)]	Loss: 0.047188
+====> Epoch: 163 Average loss: 0.000512 
+Epoch: 164 [0/5999 (0%)]	Loss: 0.027610
+Epoch: 164 [2560/5999 (43%)]	Loss: 0.074549
+Epoch: 164 [5120/5999 (85%)]	Loss: 0.036441
+saving model at:164,0.00012769562401808798
+====> Epoch: 164 Average loss: 0.000343 
+Epoch: 165 [0/5999 (0%)]	Loss: 0.020912
+Epoch: 165 [2560/5999 (43%)]	Loss: 0.027757
+Epoch: 165 [5120/5999 (85%)]	Loss: 0.042618
+====> Epoch: 165 Average loss: 0.000403 
+Epoch: 166 [0/5999 (0%)]	Loss: 0.039494
+Epoch: 166 [2560/5999 (43%)]	Loss: 0.029082
+Epoch: 166 [5120/5999 (85%)]	Loss: 0.083517
+====> Epoch: 166 Average loss: 0.000510 
+Epoch: 167 [0/5999 (0%)]	Loss: 0.042099
+Epoch: 167 [2560/5999 (43%)]	Loss: 0.050920
+Epoch: 167 [5120/5999 (85%)]	Loss: 0.068482
+====> Epoch: 167 Average loss: 0.000606 
+Epoch: 168 [0/5999 (0%)]	Loss: 0.050176
+Epoch: 168 [2560/5999 (43%)]	Loss: 0.072215
+Epoch: 168 [5120/5999 (85%)]	Loss: 0.041754
+====> Epoch: 168 Average loss: 0.000373 
+Epoch: 169 [0/5999 (0%)]	Loss: 0.021552
+Epoch: 169 [2560/5999 (43%)]	Loss: 0.042240
+Epoch: 169 [5120/5999 (85%)]	Loss: 0.019110
+====> Epoch: 169 Average loss: 0.000433 
+Epoch: 170 [0/5999 (0%)]	Loss: 0.106946
+Epoch: 170 [2560/5999 (43%)]	Loss: 0.028814
+Epoch: 170 [5120/5999 (85%)]	Loss: 0.030639
+====> Epoch: 170 Average loss: 0.000370 
+Epoch: 171 [0/5999 (0%)]	Loss: 0.153204
+Epoch: 171 [2560/5999 (43%)]	Loss: 0.031480
+Epoch: 171 [5120/5999 (85%)]	Loss: 0.029812
+====> Epoch: 171 Average loss: 0.000461 
+Epoch: 172 [0/5999 (0%)]	Loss: 0.031811
+Epoch: 172 [2560/5999 (43%)]	Loss: 0.025950
+Epoch: 172 [5120/5999 (85%)]	Loss: 0.033055
+====> Epoch: 172 Average loss: 0.000307 
+Epoch: 173 [0/5999 (0%)]	Loss: 0.042635
+Epoch: 173 [2560/5999 (43%)]	Loss: 0.016861
+Epoch: 173 [5120/5999 (85%)]	Loss: 0.085330
+====> Epoch: 173 Average loss: 0.000473 
+Epoch: 174 [0/5999 (0%)]	Loss: 0.053618
+Epoch: 174 [2560/5999 (43%)]	Loss: 0.024656
+saving model at:174,0.00012244022981030867
+Epoch: 174 [5120/5999 (85%)]	Loss: 0.154093
+====> Epoch: 174 Average loss: 0.000499 
+Epoch: 175 [0/5999 (0%)]	Loss: 0.023318
+Epoch: 175 [2560/5999 (43%)]	Loss: 0.091015
+Epoch: 175 [5120/5999 (85%)]	Loss: 0.041635
+====> Epoch: 175 Average loss: 0.000354 
+Epoch: 176 [0/5999 (0%)]	Loss: 0.029954
+Epoch: 176 [2560/5999 (43%)]	Loss: 0.065184
+Epoch: 176 [5120/5999 (85%)]	Loss: 0.106617
+====> Epoch: 176 Average loss: 0.000521 
+Epoch: 177 [0/5999 (0%)]	Loss: 0.057339
+Epoch: 177 [2560/5999 (43%)]	Loss: 0.056342
+Epoch: 177 [5120/5999 (85%)]	Loss: 0.031469
+====> Epoch: 177 Average loss: 0.000379 
+Epoch: 178 [0/5999 (0%)]	Loss: 0.044925
+Epoch: 178 [2560/5999 (43%)]	Loss: 0.096544
+Epoch: 178 [5120/5999 (85%)]	Loss: 0.032312
+====> Epoch: 178 Average loss: 0.000339 
+Epoch: 179 [0/5999 (0%)]	Loss: 0.019619
+Epoch: 179 [2560/5999 (43%)]	Loss: 0.073287
+Epoch: 179 [5120/5999 (85%)]	Loss: 0.143667
+====> Epoch: 179 Average loss: 0.000443 
+Epoch: 180 [0/5999 (0%)]	Loss: 0.041116
+Epoch: 180 [2560/5999 (43%)]	Loss: 0.027950
+Epoch: 180 [5120/5999 (85%)]	Loss: 0.043286
+====> Epoch: 180 Average loss: 0.000339 
+Epoch: 181 [0/5999 (0%)]	Loss: 0.026028
+Epoch: 181 [2560/5999 (43%)]	Loss: 0.074517
+Epoch: 181 [5120/5999 (85%)]	Loss: 0.037766
+====> Epoch: 181 Average loss: 0.000305 
+Epoch: 182 [0/5999 (0%)]	Loss: 0.018478
+Epoch: 182 [2560/5999 (43%)]	Loss: 0.030680
+Epoch: 182 [5120/5999 (85%)]	Loss: 0.157126
+====> Epoch: 182 Average loss: 0.000443 
+Epoch: 183 [0/5999 (0%)]	Loss: 0.026585
+Epoch: 183 [2560/5999 (43%)]	Loss: 0.035174
+saving model at:183,0.00011463747173547744
+Epoch: 183 [5120/5999 (85%)]	Loss: 0.021140
+====> Epoch: 183 Average loss: 0.000430 
+Epoch: 184 [0/5999 (0%)]	Loss: 0.036371
+Epoch: 184 [2560/5999 (43%)]	Loss: 0.032466
+saving model at:184,0.00011303570389281958
+Epoch: 184 [5120/5999 (85%)]	Loss: 0.044425
+====> Epoch: 184 Average loss: 0.000346 
+Epoch: 185 [0/5999 (0%)]	Loss: 0.018765
+Epoch: 185 [2560/5999 (43%)]	Loss: 0.015505
+saving model at:185,0.00010423765110317617
+Epoch: 185 [5120/5999 (85%)]	Loss: 0.104098
+====> Epoch: 185 Average loss: 0.000398 
+Epoch: 186 [0/5999 (0%)]	Loss: 0.033060
+Epoch: 186 [2560/5999 (43%)]	Loss: 0.091471
+Epoch: 186 [5120/5999 (85%)]	Loss: 0.020367
+====> Epoch: 186 Average loss: 0.000486 
+Epoch: 187 [0/5999 (0%)]	Loss: 0.094648
+Epoch: 187 [2560/5999 (43%)]	Loss: 0.026090
+Epoch: 187 [5120/5999 (85%)]	Loss: 0.032192
+====> Epoch: 187 Average loss: 0.000410 
+Epoch: 188 [0/5999 (0%)]	Loss: 0.062453
+Epoch: 188 [2560/5999 (43%)]	Loss: 0.030921
+Epoch: 188 [5120/5999 (85%)]	Loss: 0.139090
+====> Epoch: 188 Average loss: 0.000319 
+Epoch: 189 [0/5999 (0%)]	Loss: 0.066603
+Epoch: 189 [2560/5999 (43%)]	Loss: 0.072509
+Epoch: 189 [5120/5999 (85%)]	Loss: 0.042902
+====> Epoch: 189 Average loss: 0.000457 
+Epoch: 190 [0/5999 (0%)]	Loss: 0.035670
+Epoch: 190 [2560/5999 (43%)]	Loss: 0.037405
+Epoch: 190 [5120/5999 (85%)]	Loss: 0.022190
+====> Epoch: 190 Average loss: 0.000366 
+Epoch: 191 [0/5999 (0%)]	Loss: 0.073872
+Epoch: 191 [2560/5999 (43%)]	Loss: 0.023808
+Epoch: 191 [5120/5999 (85%)]	Loss: 0.058733
+====> Epoch: 191 Average loss: 0.000312 
+Epoch: 192 [0/5999 (0%)]	Loss: 0.034642
+Epoch: 192 [2560/5999 (43%)]	Loss: 0.025831
+Epoch: 192 [5120/5999 (85%)]	Loss: 0.015804
+====> Epoch: 192 Average loss: 0.000356 
+Epoch: 193 [0/5999 (0%)]	Loss: 0.106752
+Epoch: 193 [2560/5999 (43%)]	Loss: 0.022592
+Epoch: 193 [5120/5999 (85%)]	Loss: 0.038200
+====> Epoch: 193 Average loss: 0.000362 
+Epoch: 194 [0/5999 (0%)]	Loss: 0.022712
+Epoch: 194 [2560/5999 (43%)]	Loss: 0.064586
+Epoch: 194 [5120/5999 (85%)]	Loss: 0.052869
+====> Epoch: 194 Average loss: 0.000453 
+Epoch: 195 [0/5999 (0%)]	Loss: 0.076855
+Epoch: 195 [2560/5999 (43%)]	Loss: 0.025871
+Epoch: 195 [5120/5999 (85%)]	Loss: 0.019193
+====> Epoch: 195 Average loss: 0.000352 
+Epoch: 196 [0/5999 (0%)]	Loss: 0.084797
+Epoch: 196 [2560/5999 (43%)]	Loss: 0.021240
+Epoch: 196 [5120/5999 (85%)]	Loss: 0.018392
+====> Epoch: 196 Average loss: 0.000350 
+Epoch: 197 [0/5999 (0%)]	Loss: 0.113453
+Epoch: 197 [2560/5999 (43%)]	Loss: 0.093987
+Epoch: 197 [5120/5999 (85%)]	Loss: 0.059672
+====> Epoch: 197 Average loss: 0.000353 
+Epoch: 198 [0/5999 (0%)]	Loss: 0.033731
+Epoch: 198 [2560/5999 (43%)]	Loss: 0.020561
+Epoch: 198 [5120/5999 (85%)]	Loss: 0.053346
+====> Epoch: 198 Average loss: 0.000271 
+Epoch: 199 [0/5999 (0%)]	Loss: 0.035226
+Epoch: 199 [2560/5999 (43%)]	Loss: 0.137054
+Epoch: 199 [5120/5999 (85%)]	Loss: 0.023045
+====> Epoch: 199 Average loss: 0.000496 
+Epoch: 200 [0/5999 (0%)]	Loss: 0.125753
+Epoch: 200 [2560/5999 (43%)]	Loss: 0.065368
+Epoch: 200 [5120/5999 (85%)]	Loss: 0.020324
+====> Epoch: 200 Average loss: 0.000383 
+Epoch: 201 [0/5999 (0%)]	Loss: 0.036466
+Epoch: 201 [2560/5999 (43%)]	Loss: 0.018572
+Epoch: 201 [5120/5999 (85%)]	Loss: 0.031223
+saving model at:201,0.00010247870406601578
+====> Epoch: 201 Average loss: 0.000326 
+Epoch: 202 [0/5999 (0%)]	Loss: 0.019457
+Epoch: 202 [2560/5999 (43%)]	Loss: 0.059377
+Epoch: 202 [5120/5999 (85%)]	Loss: 0.020121
+====> Epoch: 202 Average loss: 0.000331 
+Epoch: 203 [0/5999 (0%)]	Loss: 0.017738
+Epoch: 203 [2560/5999 (43%)]	Loss: 0.021492
+Epoch: 203 [5120/5999 (85%)]	Loss: 0.051255
+====> Epoch: 203 Average loss: 0.000261 
+Epoch: 204 [0/5999 (0%)]	Loss: 0.035286
+Epoch: 204 [2560/5999 (43%)]	Loss: 0.169299
+Epoch: 204 [5120/5999 (85%)]	Loss: 0.026911
+====> Epoch: 204 Average loss: 0.000254 
+Epoch: 205 [0/5999 (0%)]	Loss: 0.019332
+Epoch: 205 [2560/5999 (43%)]	Loss: 0.020354
+Epoch: 205 [5120/5999 (85%)]	Loss: 0.032516
+====> Epoch: 205 Average loss: 0.000350 
+Epoch: 206 [0/5999 (0%)]	Loss: 0.096721
+Epoch: 206 [2560/5999 (43%)]	Loss: 0.075453
+Epoch: 206 [5120/5999 (85%)]	Loss: 0.045284
+====> Epoch: 206 Average loss: 0.000349 
+Epoch: 207 [0/5999 (0%)]	Loss: 0.018821
+Epoch: 207 [2560/5999 (43%)]	Loss: 0.156239
+Epoch: 207 [5120/5999 (85%)]	Loss: 0.016611
+====> Epoch: 207 Average loss: 0.000448 
+Epoch: 208 [0/5999 (0%)]	Loss: 0.032227
+Epoch: 208 [2560/5999 (43%)]	Loss: 0.230355
+Epoch: 208 [5120/5999 (85%)]	Loss: 0.027335
+====> Epoch: 208 Average loss: 0.000400 
+Epoch: 209 [0/5999 (0%)]	Loss: 0.035155
+Epoch: 209 [2560/5999 (43%)]	Loss: 0.021137
+Epoch: 209 [5120/5999 (85%)]	Loss: 0.065493
+====> Epoch: 209 Average loss: 0.000312 
+Epoch: 210 [0/5999 (0%)]	Loss: 0.020986
+Epoch: 210 [2560/5999 (43%)]	Loss: 0.055650
+Epoch: 210 [5120/5999 (85%)]	Loss: 0.021238
+====> Epoch: 210 Average loss: 0.000367 
+Epoch: 211 [0/5999 (0%)]	Loss: 0.060639
+Epoch: 211 [2560/5999 (43%)]	Loss: 0.029642
+Epoch: 211 [5120/5999 (85%)]	Loss: 0.061664
+====> Epoch: 211 Average loss: 0.000354 
+Epoch: 212 [0/5999 (0%)]	Loss: 0.029075
+Epoch: 212 [2560/5999 (43%)]	Loss: 0.017929
+Epoch: 212 [5120/5999 (85%)]	Loss: 0.045372
+====> Epoch: 212 Average loss: 0.000239 
+Epoch: 213 [0/5999 (0%)]	Loss: 0.015263
+Epoch: 213 [2560/5999 (43%)]	Loss: 0.028920
+saving model at:213,9.755316516384482e-05
+Epoch: 213 [5120/5999 (85%)]	Loss: 0.061697
+====> Epoch: 213 Average loss: 0.000297 
+Epoch: 214 [0/5999 (0%)]	Loss: 0.026695
+Epoch: 214 [2560/5999 (43%)]	Loss: 0.132759
+Epoch: 214 [5120/5999 (85%)]	Loss: 0.066110
+====> Epoch: 214 Average loss: 0.000512 
+Epoch: 215 [0/5999 (0%)]	Loss: 0.024642
+Epoch: 215 [2560/5999 (43%)]	Loss: 0.028915
+Epoch: 215 [5120/5999 (85%)]	Loss: 0.027513
+====> Epoch: 215 Average loss: 0.000552 
+Epoch: 216 [0/5999 (0%)]	Loss: 0.083069
+Epoch: 216 [2560/5999 (43%)]	Loss: 0.027215
+Epoch: 216 [5120/5999 (85%)]	Loss: 0.072171
+====> Epoch: 216 Average loss: 0.000348 
+Epoch: 217 [0/5999 (0%)]	Loss: 0.078965
+Epoch: 217 [2560/5999 (43%)]	Loss: 0.041348
+Epoch: 217 [5120/5999 (85%)]	Loss: 0.026110
+====> Epoch: 217 Average loss: 0.000266 
+Epoch: 218 [0/5999 (0%)]	Loss: 0.040592
+Epoch: 218 [2560/5999 (43%)]	Loss: 0.013000
+Epoch: 218 [5120/5999 (85%)]	Loss: 0.082171
+====> Epoch: 218 Average loss: 0.000416 
+Epoch: 219 [0/5999 (0%)]	Loss: 0.110808
+Epoch: 219 [2560/5999 (43%)]	Loss: 0.041987
+Epoch: 219 [5120/5999 (85%)]	Loss: 0.027182
+====> Epoch: 219 Average loss: 0.000565 
+Epoch: 220 [0/5999 (0%)]	Loss: 0.028165
+Epoch: 220 [2560/5999 (43%)]	Loss: 0.055894
+Epoch: 220 [5120/5999 (85%)]	Loss: 0.032267
+====> Epoch: 220 Average loss: 0.000370 
+Epoch: 221 [0/5999 (0%)]	Loss: 0.033597
+Epoch: 221 [2560/5999 (43%)]	Loss: 0.052794
+Epoch: 221 [5120/5999 (85%)]	Loss: 0.142622
+====> Epoch: 221 Average loss: 0.000619 
+Epoch: 222 [0/5999 (0%)]	Loss: 0.049642
+Epoch: 222 [2560/5999 (43%)]	Loss: 0.088188
+Epoch: 222 [5120/5999 (85%)]	Loss: 0.038402
+====> Epoch: 222 Average loss: 0.000414 
+Epoch: 223 [0/5999 (0%)]	Loss: 0.015016
+Epoch: 223 [2560/5999 (43%)]	Loss: 0.021884
+Epoch: 223 [5120/5999 (85%)]	Loss: 0.028509
+====> Epoch: 223 Average loss: 0.000313 
+Epoch: 224 [0/5999 (0%)]	Loss: 0.030158
+Epoch: 224 [2560/5999 (43%)]	Loss: 0.030599
+Epoch: 224 [5120/5999 (85%)]	Loss: 0.034632
+====> Epoch: 224 Average loss: 0.000351 
+Epoch: 225 [0/5999 (0%)]	Loss: 0.055909
+Epoch: 225 [2560/5999 (43%)]	Loss: 0.075137
+Epoch: 225 [5120/5999 (85%)]	Loss: 0.018127
+====> Epoch: 225 Average loss: 0.000389 
+Epoch: 226 [0/5999 (0%)]	Loss: 0.049666
+Epoch: 226 [2560/5999 (43%)]	Loss: 0.086794
+Epoch: 226 [5120/5999 (85%)]	Loss: 0.020855
+====> Epoch: 226 Average loss: 0.000337 
+Epoch: 227 [0/5999 (0%)]	Loss: 0.018906
+Epoch: 227 [2560/5999 (43%)]	Loss: 0.028129
+saving model at:227,9.710643900325522e-05
+Epoch: 227 [5120/5999 (85%)]	Loss: 0.048524
+====> Epoch: 227 Average loss: 0.000275 
+Epoch: 228 [0/5999 (0%)]	Loss: 0.038733
+Epoch: 228 [2560/5999 (43%)]	Loss: 0.083488
+Epoch: 228 [5120/5999 (85%)]	Loss: 0.064319
+====> Epoch: 228 Average loss: 0.000345 
+Epoch: 229 [0/5999 (0%)]	Loss: 0.026608
+Epoch: 229 [2560/5999 (43%)]	Loss: 0.017543
+Epoch: 229 [5120/5999 (85%)]	Loss: 0.035512
+====> Epoch: 229 Average loss: 0.000282 
+Epoch: 230 [0/5999 (0%)]	Loss: 0.055242
+Epoch: 230 [2560/5999 (43%)]	Loss: 0.054510
+Epoch: 230 [5120/5999 (85%)]	Loss: 0.084889
+====> Epoch: 230 Average loss: 0.000521 
+Epoch: 231 [0/5999 (0%)]	Loss: 0.076088
+Epoch: 231 [2560/5999 (43%)]	Loss: 0.026906
+Epoch: 231 [5120/5999 (85%)]	Loss: 0.052938
+====> Epoch: 231 Average loss: 0.000405 
+Epoch: 232 [0/5999 (0%)]	Loss: 0.028026
+Epoch: 232 [2560/5999 (43%)]	Loss: 0.016471
+Epoch: 232 [5120/5999 (85%)]	Loss: 0.120962
+====> Epoch: 232 Average loss: 0.000353 
+Epoch: 233 [0/5999 (0%)]	Loss: 0.031059
+Epoch: 233 [2560/5999 (43%)]	Loss: 0.020685
+Epoch: 233 [5120/5999 (85%)]	Loss: 0.058420
+====> Epoch: 233 Average loss: 0.000282 
+Epoch: 234 [0/5999 (0%)]	Loss: 0.025053
+Epoch: 234 [2560/5999 (43%)]	Loss: 0.035059
+Epoch: 234 [5120/5999 (85%)]	Loss: 0.072736
+====> Epoch: 234 Average loss: 0.000338 
+Epoch: 235 [0/5999 (0%)]	Loss: 0.059088
+Epoch: 235 [2560/5999 (43%)]	Loss: 0.107404
+Epoch: 235 [5120/5999 (85%)]	Loss: 0.030221
+====> Epoch: 235 Average loss: 0.000587 
+Epoch: 236 [0/5999 (0%)]	Loss: 0.020299
+Epoch: 236 [2560/5999 (43%)]	Loss: 0.028007
+Epoch: 236 [5120/5999 (85%)]	Loss: 0.036228
+====> Epoch: 236 Average loss: 0.000306 
+Epoch: 237 [0/5999 (0%)]	Loss: 0.039870
+Epoch: 237 [2560/5999 (43%)]	Loss: 0.020832
+Epoch: 237 [5120/5999 (85%)]	Loss: 0.037714
+====> Epoch: 237 Average loss: 0.000301 
+Epoch: 238 [0/5999 (0%)]	Loss: 0.067022
+Epoch: 238 [2560/5999 (43%)]	Loss: 0.025279
+Epoch: 238 [5120/5999 (85%)]	Loss: 0.186394
+====> Epoch: 238 Average loss: 0.000350 
+Epoch: 239 [0/5999 (0%)]	Loss: 0.018961
+Epoch: 239 [2560/5999 (43%)]	Loss: 0.041138
+Epoch: 239 [5120/5999 (85%)]	Loss: 0.017242
+saving model at:239,8.891005394980311e-05
+====> Epoch: 239 Average loss: 0.000252 
+Epoch: 240 [0/5999 (0%)]	Loss: 0.049873
+Epoch: 240 [2560/5999 (43%)]	Loss: 0.058904
+Epoch: 240 [5120/5999 (85%)]	Loss: 0.033094
+====> Epoch: 240 Average loss: 0.000558 
+Epoch: 241 [0/5999 (0%)]	Loss: 0.052203
+Epoch: 241 [2560/5999 (43%)]	Loss: 0.046961
+Epoch: 241 [5120/5999 (85%)]	Loss: 0.052289
+====> Epoch: 241 Average loss: 0.000216 
+Epoch: 242 [0/5999 (0%)]	Loss: 0.049088
+Epoch: 242 [2560/5999 (43%)]	Loss: 0.035240
+Epoch: 242 [5120/5999 (85%)]	Loss: 0.026402
+====> Epoch: 242 Average loss: 0.000243 
+Epoch: 243 [0/5999 (0%)]	Loss: 0.045642
+Epoch: 243 [2560/5999 (43%)]	Loss: 0.047617
+Epoch: 243 [5120/5999 (85%)]	Loss: 0.120652
+====> Epoch: 243 Average loss: 0.000317 
+Epoch: 244 [0/5999 (0%)]	Loss: 0.065303
+Epoch: 244 [2560/5999 (43%)]	Loss: 0.069564
+Epoch: 244 [5120/5999 (85%)]	Loss: 0.181562
+====> Epoch: 244 Average loss: 0.000434 
+Epoch: 245 [0/5999 (0%)]	Loss: 0.056737
+Epoch: 245 [2560/5999 (43%)]	Loss: 0.040624
+Epoch: 245 [5120/5999 (85%)]	Loss: 0.016940
+====> Epoch: 245 Average loss: 0.000359 
+Epoch: 246 [0/5999 (0%)]	Loss: 0.026434
+Epoch: 246 [2560/5999 (43%)]	Loss: 0.082086
+Epoch: 246 [5120/5999 (85%)]	Loss: 0.023233
+====> Epoch: 246 Average loss: 0.000347 
+Epoch: 247 [0/5999 (0%)]	Loss: 0.020117
+Epoch: 247 [2560/5999 (43%)]	Loss: 0.061484
+Epoch: 247 [5120/5999 (85%)]	Loss: 0.015878
+====> Epoch: 247 Average loss: 0.000217 
+Epoch: 248 [0/5999 (0%)]	Loss: 0.035355
+Epoch: 248 [2560/5999 (43%)]	Loss: 0.034895
+Epoch: 248 [5120/5999 (85%)]	Loss: 0.061126
+====> Epoch: 248 Average loss: 0.000287 
+Epoch: 249 [0/5999 (0%)]	Loss: 0.040617
+Epoch: 249 [2560/5999 (43%)]	Loss: 0.017304
+Epoch: 249 [5120/5999 (85%)]	Loss: 0.014570
+saving model at:249,8.776123338611797e-05
+====> Epoch: 249 Average loss: 0.000272 
+Epoch: 250 [0/5999 (0%)]	Loss: 0.016339
+Epoch: 250 [2560/5999 (43%)]	Loss: 0.052900
+Epoch: 250 [5120/5999 (85%)]	Loss: 0.020356
+====> Epoch: 250 Average loss: 0.000291 
+Epoch: 251 [0/5999 (0%)]	Loss: 0.026978
+Epoch: 251 [2560/5999 (43%)]	Loss: 0.049484
+Epoch: 251 [5120/5999 (85%)]	Loss: 0.016792
+====> Epoch: 251 Average loss: 0.000267 
+Epoch: 252 [0/5999 (0%)]	Loss: 0.017181
+Epoch: 252 [2560/5999 (43%)]	Loss: 0.052704
+Epoch: 252 [5120/5999 (85%)]	Loss: 0.014647
+====> Epoch: 252 Average loss: 0.000313 
+Epoch: 253 [0/5999 (0%)]	Loss: 0.093595
+Epoch: 253 [2560/5999 (43%)]	Loss: 0.084891
+Epoch: 253 [5120/5999 (85%)]	Loss: 0.032798
+====> Epoch: 253 Average loss: 0.000309 
+Epoch: 254 [0/5999 (0%)]	Loss: 0.019032
+Epoch: 254 [2560/5999 (43%)]	Loss: 0.028182
+Epoch: 254 [5120/5999 (85%)]	Loss: 0.012093
+saving model at:254,8.361798920668661e-05
+====> Epoch: 254 Average loss: 0.000274 
+Epoch: 255 [0/5999 (0%)]	Loss: 0.016009
+Epoch: 255 [2560/5999 (43%)]	Loss: 0.015434
+Epoch: 255 [5120/5999 (85%)]	Loss: 0.041432
+====> Epoch: 255 Average loss: 0.000246 
+Epoch: 256 [0/5999 (0%)]	Loss: 0.021511
+Epoch: 256 [2560/5999 (43%)]	Loss: 0.015061
+Epoch: 256 [5120/5999 (85%)]	Loss: 0.064814
+====> Epoch: 256 Average loss: 0.000290 
+Epoch: 257 [0/5999 (0%)]	Loss: 0.113969
+Epoch: 257 [2560/5999 (43%)]	Loss: 0.078112
+Epoch: 257 [5120/5999 (85%)]	Loss: 0.037250
+====> Epoch: 257 Average loss: 0.000454 
+Epoch: 258 [0/5999 (0%)]	Loss: 0.158254
+Epoch: 258 [2560/5999 (43%)]	Loss: 0.033953
+Epoch: 258 [5120/5999 (85%)]	Loss: 0.044103
+====> Epoch: 258 Average loss: 0.000364 
+Epoch: 259 [0/5999 (0%)]	Loss: 0.031421
+Epoch: 259 [2560/5999 (43%)]	Loss: 0.050558
+Epoch: 259 [5120/5999 (85%)]	Loss: 0.039237
+====> Epoch: 259 Average loss: 0.000345 
+Epoch: 260 [0/5999 (0%)]	Loss: 0.021920
+Epoch: 260 [2560/5999 (43%)]	Loss: 0.015585
+Epoch: 260 [5120/5999 (85%)]	Loss: 0.018943
+====> Epoch: 260 Average loss: 0.000296 
+Epoch: 261 [0/5999 (0%)]	Loss: 0.029110
+Epoch: 261 [2560/5999 (43%)]	Loss: 0.053862
+Epoch: 261 [5120/5999 (85%)]	Loss: 0.028776
+====> Epoch: 261 Average loss: 0.000222 
+Epoch: 262 [0/5999 (0%)]	Loss: 0.015882
+Epoch: 262 [2560/5999 (43%)]	Loss: 0.026433
+Epoch: 262 [5120/5999 (85%)]	Loss: 0.019746
+====> Epoch: 262 Average loss: 0.000263 
+Epoch: 263 [0/5999 (0%)]	Loss: 0.027774
+Epoch: 263 [2560/5999 (43%)]	Loss: 0.099549
+Epoch: 263 [5120/5999 (85%)]	Loss: 0.017763
+====> Epoch: 263 Average loss: 0.000249 
+Epoch: 264 [0/5999 (0%)]	Loss: 0.018865
+Epoch: 264 [2560/5999 (43%)]	Loss: 0.014665
+saving model at:264,7.720461196731776e-05
+Epoch: 264 [5120/5999 (85%)]	Loss: 0.016624
+====> Epoch: 264 Average loss: 0.000222 
+Epoch: 265 [0/5999 (0%)]	Loss: 0.058715
+Epoch: 265 [2560/5999 (43%)]	Loss: 0.017124
+Epoch: 265 [5120/5999 (85%)]	Loss: 0.043311
+====> Epoch: 265 Average loss: 0.000337 
+Epoch: 266 [0/5999 (0%)]	Loss: 0.017031
+Epoch: 266 [2560/5999 (43%)]	Loss: 0.035187
+Epoch: 266 [5120/5999 (85%)]	Loss: 0.026657
+====> Epoch: 266 Average loss: 0.000287 
+Epoch: 267 [0/5999 (0%)]	Loss: 0.017293
+Epoch: 267 [2560/5999 (43%)]	Loss: 0.030030
+Epoch: 267 [5120/5999 (85%)]	Loss: 0.013311
+====> Epoch: 267 Average loss: 0.000291 
+Epoch: 268 [0/5999 (0%)]	Loss: 0.013066
+Epoch: 268 [2560/5999 (43%)]	Loss: 0.014316
+Epoch: 268 [5120/5999 (85%)]	Loss: 0.080576
+====> Epoch: 268 Average loss: 0.000206 
+Epoch: 269 [0/5999 (0%)]	Loss: 0.034323
+Epoch: 269 [2560/5999 (43%)]	Loss: 0.044716
+Epoch: 269 [5120/5999 (85%)]	Loss: 0.039008
+====> Epoch: 269 Average loss: 0.000269 
+Epoch: 270 [0/5999 (0%)]	Loss: 0.013550
+Epoch: 270 [2560/5999 (43%)]	Loss: 0.066852
+Epoch: 270 [5120/5999 (85%)]	Loss: 0.064944
+====> Epoch: 270 Average loss: 0.000345 
+Epoch: 271 [0/5999 (0%)]	Loss: 0.033460
+Epoch: 271 [2560/5999 (43%)]	Loss: 0.034806
+Epoch: 271 [5120/5999 (85%)]	Loss: 0.026879
+====> Epoch: 271 Average loss: 0.000274 
+Epoch: 272 [0/5999 (0%)]	Loss: 0.042608
+Epoch: 272 [2560/5999 (43%)]	Loss: 0.019638
+Epoch: 272 [5120/5999 (85%)]	Loss: 0.032818
+====> Epoch: 272 Average loss: 0.000265 
+Epoch: 273 [0/5999 (0%)]	Loss: 0.039550
+Epoch: 273 [2560/5999 (43%)]	Loss: 0.085151
+Epoch: 273 [5120/5999 (85%)]	Loss: 0.014017
+====> Epoch: 273 Average loss: 0.000267 
+Epoch: 274 [0/5999 (0%)]	Loss: 0.021844
+Epoch: 274 [2560/5999 (43%)]	Loss: 0.011290
+saving model at:274,6.955128000117838e-05
+Epoch: 274 [5120/5999 (85%)]	Loss: 0.030152
+====> Epoch: 274 Average loss: 0.000238 
+Epoch: 275 [0/5999 (0%)]	Loss: 0.039111
+Epoch: 275 [2560/5999 (43%)]	Loss: 0.019484
+Epoch: 275 [5120/5999 (85%)]	Loss: 0.065777
+====> Epoch: 275 Average loss: 0.000257 
+Epoch: 276 [0/5999 (0%)]	Loss: 0.035670
+Epoch: 276 [2560/5999 (43%)]	Loss: 0.167860
+Epoch: 276 [5120/5999 (85%)]	Loss: 0.055270
+====> Epoch: 276 Average loss: 0.000328 
+Epoch: 277 [0/5999 (0%)]	Loss: 0.017911
+Epoch: 277 [2560/5999 (43%)]	Loss: 0.020269
+Epoch: 277 [5120/5999 (85%)]	Loss: 0.018658
+====> Epoch: 277 Average loss: 0.000300 
+Epoch: 278 [0/5999 (0%)]	Loss: 0.026091
+Epoch: 278 [2560/5999 (43%)]	Loss: 0.031033
+Epoch: 278 [5120/5999 (85%)]	Loss: 0.093883
+====> Epoch: 278 Average loss: 0.000313 
+Epoch: 279 [0/5999 (0%)]	Loss: 0.018334
+Epoch: 279 [2560/5999 (43%)]	Loss: 0.019199
+Epoch: 279 [5120/5999 (85%)]	Loss: 0.018485
+====> Epoch: 279 Average loss: 0.000260 
+Epoch: 280 [0/5999 (0%)]	Loss: 0.022432
+Epoch: 280 [2560/5999 (43%)]	Loss: 0.021821
+Epoch: 280 [5120/5999 (85%)]	Loss: 0.099862
+====> Epoch: 280 Average loss: 0.000278 
+Epoch: 281 [0/5999 (0%)]	Loss: 0.043554
+Epoch: 281 [2560/5999 (43%)]	Loss: 0.056512
+Epoch: 281 [5120/5999 (85%)]	Loss: 0.034109
+====> Epoch: 281 Average loss: 0.000426 
+Epoch: 282 [0/5999 (0%)]	Loss: 0.022071
+Epoch: 282 [2560/5999 (43%)]	Loss: 0.012624
+Epoch: 282 [5120/5999 (85%)]	Loss: 0.114712
+====> Epoch: 282 Average loss: 0.000325 
+Epoch: 283 [0/5999 (0%)]	Loss: 0.024328
+Epoch: 283 [2560/5999 (43%)]	Loss: 0.051226
+Epoch: 283 [5120/5999 (85%)]	Loss: 0.037700
+====> Epoch: 283 Average loss: 0.000346 
+Epoch: 284 [0/5999 (0%)]	Loss: 0.023402
+Epoch: 284 [2560/5999 (43%)]	Loss: 0.018634
+Epoch: 284 [5120/5999 (85%)]	Loss: 0.058882
+====> Epoch: 284 Average loss: 0.000329 
+Epoch: 285 [0/5999 (0%)]	Loss: 0.063853
+Epoch: 285 [2560/5999 (43%)]	Loss: 0.024330
+Epoch: 285 [5120/5999 (85%)]	Loss: 0.064911
+====> Epoch: 285 Average loss: 0.000298 
+Epoch: 286 [0/5999 (0%)]	Loss: 0.016561
+Epoch: 286 [2560/5999 (43%)]	Loss: 0.017832
+Epoch: 286 [5120/5999 (85%)]	Loss: 0.034509
+====> Epoch: 286 Average loss: 0.000329 
+Epoch: 287 [0/5999 (0%)]	Loss: 0.069226
+Epoch: 287 [2560/5999 (43%)]	Loss: 0.209481
+Epoch: 287 [5120/5999 (85%)]	Loss: 0.047908
+====> Epoch: 287 Average loss: 0.000506 
+Epoch: 288 [0/5999 (0%)]	Loss: 0.029188
+Epoch: 288 [2560/5999 (43%)]	Loss: 0.145182
+Epoch: 288 [5120/5999 (85%)]	Loss: 0.021338
+====> Epoch: 288 Average loss: 0.000427 
+Epoch: 289 [0/5999 (0%)]	Loss: 0.025816
+Epoch: 289 [2560/5999 (43%)]	Loss: 0.026605
+Epoch: 289 [5120/5999 (85%)]	Loss: 0.157380
+====> Epoch: 289 Average loss: 0.000309 
+Epoch: 290 [0/5999 (0%)]	Loss: 0.029522
+Epoch: 290 [2560/5999 (43%)]	Loss: 0.012326
+Epoch: 290 [5120/5999 (85%)]	Loss: 0.048131
+====> Epoch: 290 Average loss: 0.000474 
+Epoch: 291 [0/5999 (0%)]	Loss: 0.025816
+Epoch: 291 [2560/5999 (43%)]	Loss: 0.022834
+Epoch: 291 [5120/5999 (85%)]	Loss: 0.054431
+====> Epoch: 291 Average loss: 0.000400 
+Epoch: 292 [0/5999 (0%)]	Loss: 0.035187
+Epoch: 292 [2560/5999 (43%)]	Loss: 0.028149
+Epoch: 292 [5120/5999 (85%)]	Loss: 0.050125
+====> Epoch: 292 Average loss: 0.000317 
+Epoch: 293 [0/5999 (0%)]	Loss: 0.039269
+Epoch: 293 [2560/5999 (43%)]	Loss: 0.024352
+Epoch: 293 [5120/5999 (85%)]	Loss: 0.088867
+====> Epoch: 293 Average loss: 0.000318 
+Epoch: 294 [0/5999 (0%)]	Loss: 0.078378
+Epoch: 294 [2560/5999 (43%)]	Loss: 0.045654
+Epoch: 294 [5120/5999 (85%)]	Loss: 0.045649
+====> Epoch: 294 Average loss: 0.000384 
+Epoch: 295 [0/5999 (0%)]	Loss: 0.025719
+Epoch: 295 [2560/5999 (43%)]	Loss: 0.017572
+Epoch: 295 [5120/5999 (85%)]	Loss: 0.023850
+====> Epoch: 295 Average loss: 0.000271 
+Epoch: 296 [0/5999 (0%)]	Loss: 0.032095
+Epoch: 296 [2560/5999 (43%)]	Loss: 0.019557
+Epoch: 296 [5120/5999 (85%)]	Loss: 0.038198
+====> Epoch: 296 Average loss: 0.000279 
+Epoch: 297 [0/5999 (0%)]	Loss: 0.066813
+Epoch: 297 [2560/5999 (43%)]	Loss: 0.035661
+Epoch: 297 [5120/5999 (85%)]	Loss: 0.014063
+====> Epoch: 297 Average loss: 0.000229 
+Epoch: 298 [0/5999 (0%)]	Loss: 0.020593
+Epoch: 298 [2560/5999 (43%)]	Loss: 0.014423
+Epoch: 298 [5120/5999 (85%)]	Loss: 0.036685
+====> Epoch: 298 Average loss: 0.000219 
+Epoch: 299 [0/5999 (0%)]	Loss: 0.010612
+Epoch: 299 [2560/5999 (43%)]	Loss: 0.031246
+Epoch: 299 [5120/5999 (85%)]	Loss: 0.012856
+====> Epoch: 299 Average loss: 0.000211 
+Epoch: 300 [0/5999 (0%)]	Loss: 0.023490
+Epoch: 300 [2560/5999 (43%)]	Loss: 0.024617
+Epoch: 300 [5120/5999 (85%)]	Loss: 0.016419
+====> Epoch: 300 Average loss: 0.000393 
+Epoch: 301 [0/5999 (0%)]	Loss: 0.018279
+Epoch: 301 [2560/5999 (43%)]	Loss: 0.013497
+Epoch: 301 [5120/5999 (85%)]	Loss: 0.016365
+====> Epoch: 301 Average loss: 0.000216 
+Epoch: 302 [0/5999 (0%)]	Loss: 0.027515
+Epoch: 302 [2560/5999 (43%)]	Loss: 0.021223
+Epoch: 302 [5120/5999 (85%)]	Loss: 0.015271
+====> Epoch: 302 Average loss: 0.000235 
+Epoch: 303 [0/5999 (0%)]	Loss: 0.023425
+Epoch: 303 [2560/5999 (43%)]	Loss: 0.017823
+Epoch: 303 [5120/5999 (85%)]	Loss: 0.021629
+====> Epoch: 303 Average loss: 0.000236 
+Epoch: 304 [0/5999 (0%)]	Loss: 0.057589
+Epoch: 304 [2560/5999 (43%)]	Loss: 0.019883
+Epoch: 304 [5120/5999 (85%)]	Loss: 0.025216
+====> Epoch: 304 Average loss: 0.000252 
+Epoch: 305 [0/5999 (0%)]	Loss: 0.016138
+Epoch: 305 [2560/5999 (43%)]	Loss: 0.023407
+Epoch: 305 [5120/5999 (85%)]	Loss: 0.016912
+====> Epoch: 305 Average loss: 0.000229 
+Epoch: 306 [0/5999 (0%)]	Loss: 0.016594
+Epoch: 306 [2560/5999 (43%)]	Loss: 0.046995
+Epoch: 306 [5120/5999 (85%)]	Loss: 0.017080
+====> Epoch: 306 Average loss: 0.000211 
+Epoch: 307 [0/5999 (0%)]	Loss: 0.021773
+Epoch: 307 [2560/5999 (43%)]	Loss: 0.050878
+Epoch: 307 [5120/5999 (85%)]	Loss: 0.018337
+====> Epoch: 307 Average loss: 0.000245 
+Epoch: 308 [0/5999 (0%)]	Loss: 0.065971
+Epoch: 308 [2560/5999 (43%)]	Loss: 0.066883
+Epoch: 308 [5120/5999 (85%)]	Loss: 0.022098
+====> Epoch: 308 Average loss: 0.000289 
+Epoch: 309 [0/5999 (0%)]	Loss: 0.011254
+Epoch: 309 [2560/5999 (43%)]	Loss: 0.078759
+Epoch: 309 [5120/5999 (85%)]	Loss: 0.036794
+====> Epoch: 309 Average loss: 0.000270 
+Epoch: 310 [0/5999 (0%)]	Loss: 0.027864
+Epoch: 310 [2560/5999 (43%)]	Loss: 0.013962
+Epoch: 310 [5120/5999 (85%)]	Loss: 0.041178
+====> Epoch: 310 Average loss: 0.000211 
+Epoch: 311 [0/5999 (0%)]	Loss: 0.028339
+Epoch: 311 [2560/5999 (43%)]	Loss: 0.029034
+Epoch: 311 [5120/5999 (85%)]	Loss: 0.023096
+====> Epoch: 311 Average loss: 0.000233 
+Epoch: 312 [0/5999 (0%)]	Loss: 0.048337
+Epoch: 312 [2560/5999 (43%)]	Loss: 0.014414
+Epoch: 312 [5120/5999 (85%)]	Loss: 0.016953
+====> Epoch: 312 Average loss: 0.000245 
+Epoch: 313 [0/5999 (0%)]	Loss: 0.014832
+Epoch: 313 [2560/5999 (43%)]	Loss: 0.071230
+Epoch: 313 [5120/5999 (85%)]	Loss: 0.010495
+====> Epoch: 313 Average loss: 0.000209 
+Epoch: 314 [0/5999 (0%)]	Loss: 0.017149
+Epoch: 314 [2560/5999 (43%)]	Loss: 0.063699
+Epoch: 314 [5120/5999 (85%)]	Loss: 0.018970
+saving model at:314,6.876727123744785e-05
+====> Epoch: 314 Average loss: 0.000234 
+Epoch: 315 [0/5999 (0%)]	Loss: 0.042705
+Epoch: 315 [2560/5999 (43%)]	Loss: 0.090507
+Epoch: 315 [5120/5999 (85%)]	Loss: 0.018914
+====> Epoch: 315 Average loss: 0.000270 
+Epoch: 316 [0/5999 (0%)]	Loss: 0.024756
+Epoch: 316 [2560/5999 (43%)]	Loss: 0.053986
+Epoch: 316 [5120/5999 (85%)]	Loss: 0.014634
+====> Epoch: 316 Average loss: 0.000296 
+Epoch: 317 [0/5999 (0%)]	Loss: 0.016788
+Epoch: 317 [2560/5999 (43%)]	Loss: 0.024177
+Epoch: 317 [5120/5999 (85%)]	Loss: 0.036860
+====> Epoch: 317 Average loss: 0.000267 
+Epoch: 318 [0/5999 (0%)]	Loss: 0.010115
+Epoch: 318 [2560/5999 (43%)]	Loss: 0.042378
+Epoch: 318 [5120/5999 (85%)]	Loss: 0.028646
+====> Epoch: 318 Average loss: 0.000288 
+Epoch: 319 [0/5999 (0%)]	Loss: 0.013536
+Epoch: 319 [2560/5999 (43%)]	Loss: 0.015925
+saving model at:319,5.9753094683401285e-05
+Epoch: 319 [5120/5999 (85%)]	Loss: 0.031589
+====> Epoch: 319 Average loss: 0.000296 
+Epoch: 320 [0/5999 (0%)]	Loss: 0.054604
+Epoch: 320 [2560/5999 (43%)]	Loss: 0.029314
+Epoch: 320 [5120/5999 (85%)]	Loss: 0.030940
+====> Epoch: 320 Average loss: 0.000271 
+Epoch: 321 [0/5999 (0%)]	Loss: 0.130145
+Epoch: 321 [2560/5999 (43%)]	Loss: 0.016235
+Epoch: 321 [5120/5999 (85%)]	Loss: 0.036687
+====> Epoch: 321 Average loss: 0.000249 
+Epoch: 322 [0/5999 (0%)]	Loss: 0.025318
+Epoch: 322 [2560/5999 (43%)]	Loss: 0.072108
+Epoch: 322 [5120/5999 (85%)]	Loss: 0.031260
+====> Epoch: 322 Average loss: 0.000314 
+Epoch: 323 [0/5999 (0%)]	Loss: 0.077163
+Epoch: 323 [2560/5999 (43%)]	Loss: 0.028039
+Epoch: 323 [5120/5999 (85%)]	Loss: 0.020966
+====> Epoch: 323 Average loss: 0.000321 
+Epoch: 324 [0/5999 (0%)]	Loss: 0.058699
+Epoch: 324 [2560/5999 (43%)]	Loss: 0.022432
+Epoch: 324 [5120/5999 (85%)]	Loss: 0.045994
+====> Epoch: 324 Average loss: 0.000232 
+Epoch: 325 [0/5999 (0%)]	Loss: 0.056816
+Epoch: 325 [2560/5999 (43%)]	Loss: 0.025628
+Epoch: 325 [5120/5999 (85%)]	Loss: 0.058896
+====> Epoch: 325 Average loss: 0.000269 
+Epoch: 326 [0/5999 (0%)]	Loss: 0.030934
+Epoch: 326 [2560/5999 (43%)]	Loss: 0.032243
+Epoch: 326 [5120/5999 (85%)]	Loss: 0.013117
+====> Epoch: 326 Average loss: 0.000246 
+Epoch: 327 [0/5999 (0%)]	Loss: 0.026076
+Epoch: 327 [2560/5999 (43%)]	Loss: 0.047105
+Epoch: 327 [5120/5999 (85%)]	Loss: 0.031363
+====> Epoch: 327 Average loss: 0.000429 
+Epoch: 328 [0/5999 (0%)]	Loss: 0.116991
+Epoch: 328 [2560/5999 (43%)]	Loss: 0.052090
+Epoch: 328 [5120/5999 (85%)]	Loss: 0.048967
+====> Epoch: 328 Average loss: 0.000286 
+Epoch: 329 [0/5999 (0%)]	Loss: 0.108289
+Epoch: 329 [2560/5999 (43%)]	Loss: 0.030394
+Epoch: 329 [5120/5999 (85%)]	Loss: 0.138640
+====> Epoch: 329 Average loss: 0.000300 
+Epoch: 330 [0/5999 (0%)]	Loss: 0.014942
+Epoch: 330 [2560/5999 (43%)]	Loss: 0.029079
+Epoch: 330 [5120/5999 (85%)]	Loss: 0.050750
+====> Epoch: 330 Average loss: 0.000329 
+Epoch: 331 [0/5999 (0%)]	Loss: 0.126976
+Epoch: 331 [2560/5999 (43%)]	Loss: 0.025856
+Epoch: 331 [5120/5999 (85%)]	Loss: 0.018553
+====> Epoch: 331 Average loss: 0.000296 
+Epoch: 332 [0/5999 (0%)]	Loss: 0.046577
+Epoch: 332 [2560/5999 (43%)]	Loss: 0.019675
+Epoch: 332 [5120/5999 (85%)]	Loss: 0.031892
+====> Epoch: 332 Average loss: 0.000286 
+Epoch: 333 [0/5999 (0%)]	Loss: 0.015038
+Epoch: 333 [2560/5999 (43%)]	Loss: 0.018930
+Epoch: 333 [5120/5999 (85%)]	Loss: 0.014149
+====> Epoch: 333 Average loss: 0.000229 
+Epoch: 334 [0/5999 (0%)]	Loss: 0.068215
+Epoch: 334 [2560/5999 (43%)]	Loss: 0.066805
+Epoch: 334 [5120/5999 (85%)]	Loss: 0.030947
+====> Epoch: 334 Average loss: 0.000278 
+Epoch: 335 [0/5999 (0%)]	Loss: 0.052319
+Epoch: 335 [2560/5999 (43%)]	Loss: 0.023226
+Epoch: 335 [5120/5999 (85%)]	Loss: 0.064358
+====> Epoch: 335 Average loss: 0.000228 
+Epoch: 336 [0/5999 (0%)]	Loss: 0.014525
+Epoch: 336 [2560/5999 (43%)]	Loss: 0.199432
+Epoch: 336 [5120/5999 (85%)]	Loss: 0.124999
+====> Epoch: 336 Average loss: 0.000412 
+Epoch: 337 [0/5999 (0%)]	Loss: 0.012144
+Epoch: 337 [2560/5999 (43%)]	Loss: 0.039589
+Epoch: 337 [5120/5999 (85%)]	Loss: 0.032217
+====> Epoch: 337 Average loss: 0.000338 
+Epoch: 338 [0/5999 (0%)]	Loss: 0.034664
+Epoch: 338 [2560/5999 (43%)]	Loss: 0.020773
+Epoch: 338 [5120/5999 (85%)]	Loss: 0.034677
+====> Epoch: 338 Average loss: 0.000258 
+Epoch: 339 [0/5999 (0%)]	Loss: 0.036878
+Epoch: 339 [2560/5999 (43%)]	Loss: 0.070205
+Epoch: 339 [5120/5999 (85%)]	Loss: 0.011564
+====> Epoch: 339 Average loss: 0.000242 
+Epoch: 340 [0/5999 (0%)]	Loss: 0.044917
+Epoch: 340 [2560/5999 (43%)]	Loss: 0.182872
+Epoch: 340 [5120/5999 (85%)]	Loss: 0.045832
+====> Epoch: 340 Average loss: 0.000337 
+Epoch: 341 [0/5999 (0%)]	Loss: 0.028819
+Epoch: 341 [2560/5999 (43%)]	Loss: 0.033658
+Epoch: 341 [5120/5999 (85%)]	Loss: 0.012832
+====> Epoch: 341 Average loss: 0.000273 
+Epoch: 342 [0/5999 (0%)]	Loss: 0.037460
+Epoch: 342 [2560/5999 (43%)]	Loss: 0.039067
+Epoch: 342 [5120/5999 (85%)]	Loss: 0.012972
+====> Epoch: 342 Average loss: 0.000264 
+Epoch: 343 [0/5999 (0%)]	Loss: 0.037961
+Epoch: 343 [2560/5999 (43%)]	Loss: 0.011314
+Epoch: 343 [5120/5999 (85%)]	Loss: 0.084936
+====> Epoch: 343 Average loss: 0.000261 
+Epoch: 344 [0/5999 (0%)]	Loss: 0.017692
+Epoch: 344 [2560/5999 (43%)]	Loss: 0.017941
+Epoch: 344 [5120/5999 (85%)]	Loss: 0.013868
+====> Epoch: 344 Average loss: 0.000199 
+Epoch: 345 [0/5999 (0%)]	Loss: 0.021568
+Epoch: 345 [2560/5999 (43%)]	Loss: 0.033325
+Epoch: 345 [5120/5999 (85%)]	Loss: 0.026610
+====> Epoch: 345 Average loss: 0.000237 
+Epoch: 346 [0/5999 (0%)]	Loss: 0.041543
+Epoch: 346 [2560/5999 (43%)]	Loss: 0.020139
+Epoch: 346 [5120/5999 (85%)]	Loss: 0.036603
+====> Epoch: 346 Average loss: 0.000193 
+Epoch: 347 [0/5999 (0%)]	Loss: 0.048728
+Epoch: 347 [2560/5999 (43%)]	Loss: 0.049784
+Epoch: 347 [5120/5999 (85%)]	Loss: 0.010150
+====> Epoch: 347 Average loss: 0.000220 
+Epoch: 348 [0/5999 (0%)]	Loss: 0.013580
+Epoch: 348 [2560/5999 (43%)]	Loss: 0.059091
+Epoch: 348 [5120/5999 (85%)]	Loss: 0.021249
+====> Epoch: 348 Average loss: 0.000234 
+Epoch: 349 [0/5999 (0%)]	Loss: 0.030650
+Epoch: 349 [2560/5999 (43%)]	Loss: 0.014978
+Epoch: 349 [5120/5999 (85%)]	Loss: 0.030669
+====> Epoch: 349 Average loss: 0.000243 
+Epoch: 350 [0/5999 (0%)]	Loss: 0.073954
+Epoch: 350 [2560/5999 (43%)]	Loss: 0.024638
+Epoch: 350 [5120/5999 (85%)]	Loss: 0.057776
+====> Epoch: 350 Average loss: 0.000370 
+Epoch: 351 [0/5999 (0%)]	Loss: 0.085263
+Epoch: 351 [2560/5999 (43%)]	Loss: 0.014491
+Epoch: 351 [5120/5999 (85%)]	Loss: 0.015143
+====> Epoch: 351 Average loss: 0.000224 
+Epoch: 352 [0/5999 (0%)]	Loss: 0.026450
+Epoch: 352 [2560/5999 (43%)]	Loss: 0.034006
+Epoch: 352 [5120/5999 (85%)]	Loss: 0.030145
+====> Epoch: 352 Average loss: 0.000293 
+Epoch: 353 [0/5999 (0%)]	Loss: 0.016962
+Epoch: 353 [2560/5999 (43%)]	Loss: 0.021794
+Epoch: 353 [5120/5999 (85%)]	Loss: 0.014751
+====> Epoch: 353 Average loss: 0.000242 
+Epoch: 354 [0/5999 (0%)]	Loss: 0.028621
+Epoch: 354 [2560/5999 (43%)]	Loss: 0.031621
+Epoch: 354 [5120/5999 (85%)]	Loss: 0.026453
+====> Epoch: 354 Average loss: 0.000229 
+Epoch: 355 [0/5999 (0%)]	Loss: 0.067561
+Epoch: 355 [2560/5999 (43%)]	Loss: 0.014617
+Epoch: 355 [5120/5999 (85%)]	Loss: 0.016302
+====> Epoch: 355 Average loss: 0.000195 
+Epoch: 356 [0/5999 (0%)]	Loss: 0.031657
+Epoch: 356 [2560/5999 (43%)]	Loss: 0.020661
+Epoch: 356 [5120/5999 (85%)]	Loss: 0.011561
+====> Epoch: 356 Average loss: 0.000183 
+Epoch: 357 [0/5999 (0%)]	Loss: 0.019137
+Epoch: 357 [2560/5999 (43%)]	Loss: 0.014837
+Epoch: 357 [5120/5999 (85%)]	Loss: 0.017714
+====> Epoch: 357 Average loss: 0.000217 
+Epoch: 358 [0/5999 (0%)]	Loss: 0.015824
+Epoch: 358 [2560/5999 (43%)]	Loss: 0.023395
+Epoch: 358 [5120/5999 (85%)]	Loss: 0.077969
+====> Epoch: 358 Average loss: 0.000309 
+Epoch: 359 [0/5999 (0%)]	Loss: 0.082128
+Epoch: 359 [2560/5999 (43%)]	Loss: 0.037153
+Epoch: 359 [5120/5999 (85%)]	Loss: 0.021974
+====> Epoch: 359 Average loss: 0.000288 
+Epoch: 360 [0/5999 (0%)]	Loss: 0.031865
+Epoch: 360 [2560/5999 (43%)]	Loss: 0.043510
+Epoch: 360 [5120/5999 (85%)]	Loss: 0.031335
+====> Epoch: 360 Average loss: 0.000261 
+Epoch: 361 [0/5999 (0%)]	Loss: 0.018465
+Epoch: 361 [2560/5999 (43%)]	Loss: 0.055934
+Epoch: 361 [5120/5999 (85%)]	Loss: 0.028957
+====> Epoch: 361 Average loss: 0.000434 
+Epoch: 362 [0/5999 (0%)]	Loss: 0.021274
+Epoch: 362 [2560/5999 (43%)]	Loss: 0.016330
+Epoch: 362 [5120/5999 (85%)]	Loss: 0.111975
+====> Epoch: 362 Average loss: 0.000323 
+Epoch: 363 [0/5999 (0%)]	Loss: 0.026396
+Epoch: 363 [2560/5999 (43%)]	Loss: 0.022442
+Epoch: 363 [5120/5999 (85%)]	Loss: 0.049860
+====> Epoch: 363 Average loss: 0.000312 
+Epoch: 364 [0/5999 (0%)]	Loss: 0.016501
+Epoch: 364 [2560/5999 (43%)]	Loss: 0.013533
+Epoch: 364 [5120/5999 (85%)]	Loss: 0.029250
+====> Epoch: 364 Average loss: 0.000218 
+Epoch: 365 [0/5999 (0%)]	Loss: 0.012042
+Epoch: 365 [2560/5999 (43%)]	Loss: 0.018455
+Epoch: 365 [5120/5999 (85%)]	Loss: 0.033664
+====> Epoch: 365 Average loss: 0.000288 
+Epoch: 366 [0/5999 (0%)]	Loss: 0.052739
+Epoch: 366 [2560/5999 (43%)]	Loss: 0.020643
+Epoch: 366 [5120/5999 (85%)]	Loss: 0.014398
+====> Epoch: 366 Average loss: 0.000236 
+Epoch: 367 [0/5999 (0%)]	Loss: 0.012292
+Epoch: 367 [2560/5999 (43%)]	Loss: 0.117043
+Epoch: 367 [5120/5999 (85%)]	Loss: 0.028256
+====> Epoch: 367 Average loss: 0.000246 
+Epoch: 368 [0/5999 (0%)]	Loss: 0.025178
+Epoch: 368 [2560/5999 (43%)]	Loss: 0.042848
+Epoch: 368 [5120/5999 (85%)]	Loss: 0.025294
+====> Epoch: 368 Average loss: 0.000197 
+Epoch: 369 [0/5999 (0%)]	Loss: 0.021757
+Epoch: 369 [2560/5999 (43%)]	Loss: 0.016507
+Epoch: 369 [5120/5999 (85%)]	Loss: 0.017011
+====> Epoch: 369 Average loss: 0.000224 
+Epoch: 370 [0/5999 (0%)]	Loss: 0.031433
+Epoch: 370 [2560/5999 (43%)]	Loss: 0.019546
+Epoch: 370 [5120/5999 (85%)]	Loss: 0.015313
+====> Epoch: 370 Average loss: 0.000360 
+Epoch: 371 [0/5999 (0%)]	Loss: 0.029952
+Epoch: 371 [2560/5999 (43%)]	Loss: 0.071971
+Epoch: 371 [5120/5999 (85%)]	Loss: 0.028624
+====> Epoch: 371 Average loss: 0.000233 
+Epoch: 372 [0/5999 (0%)]	Loss: 0.024076
+Epoch: 372 [2560/5999 (43%)]	Loss: 0.031062
+Epoch: 372 [5120/5999 (85%)]	Loss: 0.018595
+====> Epoch: 372 Average loss: 0.000216 
+Epoch: 373 [0/5999 (0%)]	Loss: 0.040439
+Epoch: 373 [2560/5999 (43%)]	Loss: 0.016179
+Epoch: 373 [5120/5999 (85%)]	Loss: 0.014216
+====> Epoch: 373 Average loss: 0.000188 
+Epoch: 374 [0/5999 (0%)]	Loss: 0.016734
+Epoch: 374 [2560/5999 (43%)]	Loss: 0.016471
+Epoch: 374 [5120/5999 (85%)]	Loss: 0.023093
+====> Epoch: 374 Average loss: 0.000212 
+Epoch: 375 [0/5999 (0%)]	Loss: 0.043905
+Epoch: 375 [2560/5999 (43%)]	Loss: 0.031820
+Epoch: 375 [5120/5999 (85%)]	Loss: 0.021720
+====> Epoch: 375 Average loss: 0.000251 
+Epoch: 376 [0/5999 (0%)]	Loss: 0.059314
+Epoch: 376 [2560/5999 (43%)]	Loss: 0.018622
+Epoch: 376 [5120/5999 (85%)]	Loss: 0.014193
+saving model at:376,5.6796739692799745e-05
+====> Epoch: 376 Average loss: 0.000216 
+Epoch: 377 [0/5999 (0%)]	Loss: 0.011140
+Epoch: 377 [2560/5999 (43%)]	Loss: 0.019248
+Epoch: 377 [5120/5999 (85%)]	Loss: 0.020681
+====> Epoch: 377 Average loss: 0.000204 
+Epoch: 378 [0/5999 (0%)]	Loss: 0.014792
+Epoch: 378 [2560/5999 (43%)]	Loss: 0.035577
+Epoch: 378 [5120/5999 (85%)]	Loss: 0.070224
+====> Epoch: 378 Average loss: 0.000342 
+Epoch: 379 [0/5999 (0%)]	Loss: 0.018442
+Epoch: 379 [2560/5999 (43%)]	Loss: 0.014943
+Epoch: 379 [5120/5999 (85%)]	Loss: 0.031578
+====> Epoch: 379 Average loss: 0.000213 
+Epoch: 380 [0/5999 (0%)]	Loss: 0.017849
+Epoch: 380 [2560/5999 (43%)]	Loss: 0.030037
+Epoch: 380 [5120/5999 (85%)]	Loss: 0.015475
+====> Epoch: 380 Average loss: 0.000236 
+Epoch: 381 [0/5999 (0%)]	Loss: 0.035593
+Epoch: 381 [2560/5999 (43%)]	Loss: 0.022331
+Epoch: 381 [5120/5999 (85%)]	Loss: 0.019956
+====> Epoch: 381 Average loss: 0.000208 
+Epoch: 382 [0/5999 (0%)]	Loss: 0.011618
+Epoch: 382 [2560/5999 (43%)]	Loss: 0.027709
+Epoch: 382 [5120/5999 (85%)]	Loss: 0.027568
+====> Epoch: 382 Average loss: 0.000237 
+Epoch: 383 [0/5999 (0%)]	Loss: 0.015230
+Epoch: 383 [2560/5999 (43%)]	Loss: 0.037928
+Epoch: 383 [5120/5999 (85%)]	Loss: 0.018859
+====> Epoch: 383 Average loss: 0.000232 
+Epoch: 384 [0/5999 (0%)]	Loss: 0.013850
+Epoch: 384 [2560/5999 (43%)]	Loss: 0.019858
+Epoch: 384 [5120/5999 (85%)]	Loss: 0.012630
+====> Epoch: 384 Average loss: 0.000194 
+Epoch: 385 [0/5999 (0%)]	Loss: 0.051246
+Epoch: 385 [2560/5999 (43%)]	Loss: 0.013107
+Epoch: 385 [5120/5999 (85%)]	Loss: 0.016204
+====> Epoch: 385 Average loss: 0.000241 
+Epoch: 386 [0/5999 (0%)]	Loss: 0.018077
+Epoch: 386 [2560/5999 (43%)]	Loss: 0.056231
+Epoch: 386 [5120/5999 (85%)]	Loss: 0.012760
+====> Epoch: 386 Average loss: 0.000200 
+Epoch: 387 [0/5999 (0%)]	Loss: 0.047562
+Epoch: 387 [2560/5999 (43%)]	Loss: 0.020149
+Epoch: 387 [5120/5999 (85%)]	Loss: 0.023552
+====> Epoch: 387 Average loss: 0.000281 
+Epoch: 388 [0/5999 (0%)]	Loss: 0.036539
+Epoch: 388 [2560/5999 (43%)]	Loss: 0.021779
+Epoch: 388 [5120/5999 (85%)]	Loss: 0.049516
+====> Epoch: 388 Average loss: 0.000367 
+Epoch: 389 [0/5999 (0%)]	Loss: 0.045275
+Epoch: 389 [2560/5999 (43%)]	Loss: 0.043625
+Epoch: 389 [5120/5999 (85%)]	Loss: 0.023167
+====> Epoch: 389 Average loss: 0.000308 
+Epoch: 390 [0/5999 (0%)]	Loss: 0.037616
+Epoch: 390 [2560/5999 (43%)]	Loss: 0.059508
+Epoch: 390 [5120/5999 (85%)]	Loss: 0.030726
+====> Epoch: 390 Average loss: 0.000222 
+Epoch: 391 [0/5999 (0%)]	Loss: 0.011300
+Epoch: 391 [2560/5999 (43%)]	Loss: 0.025321
+Epoch: 391 [5120/5999 (85%)]	Loss: 0.017017
+====> Epoch: 391 Average loss: 0.000252 
+Epoch: 392 [0/5999 (0%)]	Loss: 0.034005
+Epoch: 392 [2560/5999 (43%)]	Loss: 0.013610
+Epoch: 392 [5120/5999 (85%)]	Loss: 0.068992
+====> Epoch: 392 Average loss: 0.000309 
+Epoch: 393 [0/5999 (0%)]	Loss: 0.028311
+Epoch: 393 [2560/5999 (43%)]	Loss: 0.029925
+Epoch: 393 [5120/5999 (85%)]	Loss: 0.009832
+====> Epoch: 393 Average loss: 0.000260 
+Epoch: 394 [0/5999 (0%)]	Loss: 0.020602
+Epoch: 394 [2560/5999 (43%)]	Loss: 0.021066
+Epoch: 394 [5120/5999 (85%)]	Loss: 0.014594
+====> Epoch: 394 Average loss: 0.000237 
+Epoch: 395 [0/5999 (0%)]	Loss: 0.043576
+Epoch: 395 [2560/5999 (43%)]	Loss: 0.050843
+Epoch: 395 [5120/5999 (85%)]	Loss: 0.047034
+====> Epoch: 395 Average loss: 0.000211 
+Epoch: 396 [0/5999 (0%)]	Loss: 0.012463
+Epoch: 396 [2560/5999 (43%)]	Loss: 0.140885
+Epoch: 396 [5120/5999 (85%)]	Loss: 0.046775
+====> Epoch: 396 Average loss: 0.000336 
+Epoch: 397 [0/5999 (0%)]	Loss: 0.143562
+Epoch: 397 [2560/5999 (43%)]	Loss: 0.042339
+Epoch: 397 [5120/5999 (85%)]	Loss: 0.045649
+====> Epoch: 397 Average loss: 0.000301 
+Epoch: 398 [0/5999 (0%)]	Loss: 0.019600
+Epoch: 398 [2560/5999 (43%)]	Loss: 0.017342
+Epoch: 398 [5120/5999 (85%)]	Loss: 0.063645
+====> Epoch: 398 Average loss: 0.000202 
+Epoch: 399 [0/5999 (0%)]	Loss: 0.019806
+Epoch: 399 [2560/5999 (43%)]	Loss: 0.012069
+Epoch: 399 [5120/5999 (85%)]	Loss: 0.028361
+====> Epoch: 399 Average loss: 0.000260 
+Epoch: 400 [0/5999 (0%)]	Loss: 0.033909
+Epoch: 400 [2560/5999 (43%)]	Loss: 0.043878
+Epoch: 400 [5120/5999 (85%)]	Loss: 0.015868
+====> Epoch: 400 Average loss: 0.000277 
+Reconstruction Loss 5.679674196289852e-05
+per_obj_mse: ['8.9567358372733e-05', '2.4026132450671867e-05']
+Reconstruction Loss 5.4701117699989244e-05
+per_obj_mse: ['8.740751218283549e-05', '2.1994737835484557e-05']
+cuda
+Namespace(action_dim=15, baseline=True, batch_size=128, copy_action=False, cuda=True, dataset='narma_2d_2_n0.csv', dec_epochs=0, decoder=False, decoder_gl=1.0, decoder_l1=1.0, dropout=0.0, embedding_dim=40, epochs=0, forecasting_M5=False, forecasting_cl=False, full=True, futureControlOnly=False, gl=1.0, hard_decoder=False, hidden_dim=512, hierarchical_ls=False, horizon=5, ignore_action=False, isControl=False, l1=1.0, layer_gl=False, layer_l1=False, learning_rate=0.001, length=11, log_interval=20, message_l1=1.0, message_pass=False, name='B+SC', no_cuda=False, nodes=2, noise=False, normalize=False, num_cont=2, num_objects=2, ood=True, pastControlOnly=False, pastStateOnly=False, pastinfo=False, path='/data/pankaj/CLTS//data/narma/combgen/6/test_ood_alpha_0.0_0.1/', per_node_MLP=False, pert=None, recurrent=False, save_embeddings=False, save_folder='/data/pankaj/CLTS/output/CombGen/5Aug2020_NARMA_2D_S1_4_data6_spur_corr_400epochs_train_alpha_0.4_0.7_B_4L/narma_2d_2_n0.csv', save_interval=20, save_predictions=False, seed=42, sepCTRL=True, setup=1, shift=10, shuffle=True, sigma=0.5, soft_decoder_gl=False, soft_decoder_l1=False, split=0.75, steps=1, stride=1, use_condenser=False, window_size=11)
+(7999, 2, 11)
+(1999, 2, 11)
+Data loaded!
+MVTS(
+  (control_CNN_0): CNN_Extractor_cont(
+    (dropoutlayer): Dropout(p=0.0)
+    (CNN): Sequential(
+      (0): Conv1d(1, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 1, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(1, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (control_CNN_1): CNN_Extractor_cont(
+    (dropoutlayer): Dropout(p=0.0)
+    (CNN): Sequential(
+      (0): Conv1d(1, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 1, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(1, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (state_CNN): CNN_Extractor(
+    (CNN): Sequential(
+      (0): Conv1d(2, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 2, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(2, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (state_LSTM): LSTM(11, 40)
+  (control_LSTM_0): LSTM(11, 40)
+  (control_LSTM_1): LSTM(11, 40)
+  (extract_state): Sequential(
+    (0): Linear(in_features=40, out_features=11, bias=True)
+    (1): Tanh()
+  )
+  (transition_model): Sequential(
+    (0): Linear(in_features=160, out_features=160, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=160, out_features=80, bias=True)
+    (3): Tanh()
+  )
+  (decoder): Linear(in_features=80, out_features=2, bias=True)
+  (MSE): MSELoss()
+)
+Starting model training...
+cuda
+Namespace(action_dim=15, baseline=True, batch_size=128, copy_action=False, cuda=True, dataset='narma_2d_2_n0.csv', dec_epochs=0, decoder=False, decoder_gl=1.0, decoder_l1=1.0, dropout=0.0, embedding_dim=40, epochs=0, forecasting_M5=False, forecasting_cl=False, full=True, futureControlOnly=False, gl=1.0, hard_decoder=False, hidden_dim=512, hierarchical_ls=False, horizon=5, ignore_action=False, isControl=False, l1=1.0, layer_gl=False, layer_l1=False, learning_rate=0.001, length=11, log_interval=20, message_l1=1.0, message_pass=False, name='B+SC', no_cuda=False, nodes=2, noise=False, normalize=False, num_cont=2, num_objects=2, ood=True, pastControlOnly=False, pastStateOnly=False, pastinfo=False, path='/data/pankaj/CLTS//data/narma/combgen/6/test_ood_alpha_0.0_0.1/', per_node_MLP=False, pert=None, recurrent=False, save_embeddings=False, save_folder='/data/pankaj/CLTS/output/CombGen/5Aug2020_NARMA_2D_S1_4_data6_spur_corr_400epochs_train_alpha_0.4_0.7_B_4L/narma_2d_2_n0.csv', save_interval=20, save_predictions=False, seed=42, sepCTRL=True, setup=1, shift=10, shuffle=True, sigma=0.5, soft_decoder_gl=False, soft_decoder_l1=False, split=0.75, steps=1, stride=1, use_condenser=False, window_size=11)
+(7999, 2, 11)
+(1999, 2, 11)
+Data loaded!
+MVTS(
+  (control_CNN_0): CNN_Extractor_cont(
+    (dropoutlayer): Dropout(p=0.0)
+    (CNN): Sequential(
+      (0): Conv1d(1, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 1, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(1, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (control_CNN_1): CNN_Extractor_cont(
+    (dropoutlayer): Dropout(p=0.0)
+    (CNN): Sequential(
+      (0): Conv1d(1, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 1, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(1, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (state_CNN): CNN_Extractor(
+    (CNN): Sequential(
+      (0): Conv1d(2, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 2, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(2, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (state_LSTM): LSTM(11, 40)
+  (control_LSTM_0): LSTM(11, 40)
+  (control_LSTM_1): LSTM(11, 40)
+  (extract_state): Sequential(
+    (0): Linear(in_features=40, out_features=11, bias=True)
+    (1): Tanh()
+  )
+  (transition_model): Sequential(
+    (0): Linear(in_features=160, out_features=160, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=160, out_features=80, bias=True)
+    (3): Tanh()
+  )
+  (decoder): Linear(in_features=80, out_features=2, bias=True)
+  (MSE): MSELoss()
+)
+Starting model training...
+Reconstruction Loss 0.0001775927011622116
+per_obj_mse: ['0.00017358051263727248', '0.0001816049189073965']
+Reconstruction Loss 0.00018955293301675327
+per_obj_mse: ['0.00017978472169488668', '0.00019932114810217172']
+cuda
+Namespace(action_dim=15, baseline=True, batch_size=128, copy_action=False, cuda=True, dataset='narma_2d_2_n0.csv', dec_epochs=0, decoder=False, decoder_gl=1.0, decoder_l1=1.0, dropout=0.0, embedding_dim=40, epochs=0, forecasting_M5=False, forecasting_cl=False, full=True, futureControlOnly=False, gl=1.0, hard_decoder=False, hidden_dim=512, hierarchical_ls=False, horizon=5, ignore_action=False, isControl=False, l1=1.0, layer_gl=False, layer_l1=False, learning_rate=0.001, length=11, log_interval=20, message_l1=1.0, message_pass=False, name='B+SC', no_cuda=False, nodes=2, noise=False, normalize=False, num_cont=2, num_objects=2, onlyReLU=False, ood=True, pastControlOnly=False, pastStateOnly=False, pastinfo=False, path='/data/pankaj/CLTS//data/narma/combgen/6/test_ood_alpha_0.0_0.1/', per_node_MLP=False, pert=None, recurrent=False, save_embeddings=False, save_folder='/data/pankaj/CLTS/output/CombGen/5Aug2020_NARMA_2D_S1_4_data6_spur_corr_400epochs_train_alpha_0.4_0.7_B_4L/narma_2d_2_n0.csv', save_interval=20, save_predictions=False, seed=42, sepCTRL=True, setup=1, shift=10, shuffle=True, sigma=0.5, soft_decoder_gl=False, soft_decoder_l1=False, split=0.75, steps=1, stride=1, use_condenser=False, window_size=11)
+(7999, 2, 11)
+(1999, 2, 11)
+Data loaded!
+MVTS(
+  (control_CNN_0): CNN_Extractor_cont(
+    (dropoutlayer): Dropout(p=0.0)
+    (CNN): Sequential(
+      (0): Conv1d(1, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 1, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(1, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (control_CNN_1): CNN_Extractor_cont(
+    (dropoutlayer): Dropout(p=0.0)
+    (CNN): Sequential(
+      (0): Conv1d(1, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 1, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(1, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (state_CNN): CNN_Extractor(
+    (CNN): Sequential(
+      (0): Conv1d(2, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 2, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(2, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (state_LSTM): LSTM(11, 40)
+  (control_LSTM_0): LSTM(11, 40)
+  (control_LSTM_1): LSTM(11, 40)
+  (extract_state): Sequential(
+    (0): Linear(in_features=40, out_features=11, bias=True)
+    (1): Tanh()
+  )
+  (transition_model): Sequential(
+    (0): Linear(in_features=160, out_features=160, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=160, out_features=80, bias=True)
+    (3): Tanh()
+  )
+  (decoder): Linear(in_features=80, out_features=2, bias=True)
+  (MSE): MSELoss()
+)
+Starting model training...
+Reconstruction Loss 0.0001775927011622116
+per_obj_mse: ['0.00017358051263727248', '0.0001816049189073965']
+Reconstruction Loss 0.00018955293301675327
+per_obj_mse: ['0.00017978472169488668', '0.00019932114810217172']
+cuda
+Namespace(action_dim=15, baseline=True, batch_size=128, copy_action=False, cuda=True, dataset='narma_2d_2_n0.csv', dec_epochs=0, decoder=False, decoder_gl=1.0, decoder_l1=1.0, dropout=0.0, embedding_dim=40, epochs=0, forecasting_M5=False, forecasting_cl=False, full=True, futureControlOnly=False, gl=1.0, hard_decoder=False, hidden_dim=512, hierarchical_ls=False, horizon=20, ignore_action=False, isControl=False, l1=1.0, layer_gl=False, layer_l1=False, learning_rate=0.001, length=11, log_interval=20, message_l1=1.0, message_pass=False, name='B+SC', no_cuda=False, nodes=2, noise=False, normalize=False, num_cont=2, num_objects=2, onlyReLU=False, ood=True, pastControlOnly=False, pastStateOnly=False, pastinfo=False, path='/data/pankaj/CLTS//data/narma/combgen/6/test_ood_alpha_0.0_0.1/', per_node_MLP=False, pert=None, recurrent=False, save_embeddings=False, save_folder='/data/pankaj/CLTS/output/CombGen/5Aug2020_NARMA_2D_S1_4_data6_spur_corr_400epochs_train_alpha_0.4_0.7_B_4L/narma_2d_2_n0.csv', save_interval=20, save_predictions=False, seed=42, sepCTRL=True, setup=1, shift=10, shuffle=True, sigma=0.5, soft_decoder_gl=False, soft_decoder_l1=False, split=0.75, steps=1, stride=1, use_condenser=False, window_size=11)
+(7997, 2, 11)
+(1997, 2, 11)
+Data loaded!
+MVTS(
+  (control_CNN_0): CNN_Extractor_cont(
+    (dropoutlayer): Dropout(p=0.0)
+    (CNN): Sequential(
+      (0): Conv1d(1, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 1, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(1, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (control_CNN_1): CNN_Extractor_cont(
+    (dropoutlayer): Dropout(p=0.0)
+    (CNN): Sequential(
+      (0): Conv1d(1, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 1, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(1, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (state_CNN): CNN_Extractor(
+    (CNN): Sequential(
+      (0): Conv1d(2, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 2, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(2, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (state_LSTM): LSTM(11, 40)
+  (control_LSTM_0): LSTM(11, 40)
+  (control_LSTM_1): LSTM(11, 40)
+  (extract_state): Sequential(
+    (0): Linear(in_features=40, out_features=11, bias=True)
+    (1): Tanh()
+  )
+  (transition_model): Sequential(
+    (0): Linear(in_features=160, out_features=160, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=160, out_features=80, bias=True)
+    (3): Tanh()
+  )
+  (decoder): Linear(in_features=80, out_features=2, bias=True)
+  (MSE): MSELoss()
+)
+Starting model training...
+Reconstruction Loss 0.0014893552772700786
+per_obj_mse: ['0.002252999460324645', '0.00072571134660393']
+Reconstruction Loss 0.0015698584250389456
+per_obj_mse: ['0.002324586035683751', '0.000815131061244756']
+cuda
+Namespace(action_dim=15, baseline=True, batch_size=128, copy_action=False, cuda=True, dataset='narma_2d_2_n0.csv', dec_epochs=0, decoder=False, decoder_gl=1.0, decoder_l1=1.0, dropout=0.0, embedding_dim=40, epochs=0, forecasting_M5=False, forecasting_cl=False, full=True, futureControlOnly=False, gl=1.0, hard_decoder=False, hidden_dim=512, hierarchical_ls=False, horizon=60, ignore_action=False, isControl=False, l1=1.0, layer_gl=False, layer_l1=False, learning_rate=0.001, length=11, log_interval=20, message_l1=1.0, message_pass=False, name='B+SC', no_cuda=False, nodes=2, noise=False, normalize=False, num_cont=2, num_objects=2, onlyReLU=False, ood=True, pastControlOnly=False, pastStateOnly=False, pastinfo=False, path='/data/pankaj/CLTS//data/narma/combgen/6/test_ood_alpha_0.0_0.1/', per_node_MLP=False, pert=None, recurrent=False, save_embeddings=False, save_folder='/data/pankaj/CLTS/output/CombGen/5Aug2020_NARMA_2D_S1_4_data6_spur_corr_400epochs_train_alpha_0.4_0.7_B_4L/narma_2d_2_n0.csv', save_interval=20, save_predictions=False, seed=42, sepCTRL=True, setup=1, shift=10, shuffle=True, sigma=0.5, soft_decoder_gl=False, soft_decoder_l1=False, split=0.75, steps=1, stride=1, use_condenser=False, window_size=11)
+(7993, 2, 11)
+(1993, 2, 11)
+Data loaded!
+MVTS(
+  (control_CNN_0): CNN_Extractor_cont(
+    (dropoutlayer): Dropout(p=0.0)
+    (CNN): Sequential(
+      (0): Conv1d(1, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 1, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(1, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (control_CNN_1): CNN_Extractor_cont(
+    (dropoutlayer): Dropout(p=0.0)
+    (CNN): Sequential(
+      (0): Conv1d(1, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 1, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(1, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (state_CNN): CNN_Extractor(
+    (CNN): Sequential(
+      (0): Conv1d(2, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 2, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(2, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (state_LSTM): LSTM(11, 40)
+  (control_LSTM_0): LSTM(11, 40)
+  (control_LSTM_1): LSTM(11, 40)
+  (extract_state): Sequential(
+    (0): Linear(in_features=40, out_features=11, bias=True)
+    (1): Tanh()
+  )
+  (transition_model): Sequential(
+    (0): Linear(in_features=160, out_features=160, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=160, out_features=80, bias=True)
+    (3): Tanh()
+  )
+  (decoder): Linear(in_features=80, out_features=2, bias=True)
+  (MSE): MSELoss()
+)
+Starting model training...
+Reconstruction Loss 0.005291087797033661
+per_obj_mse: ['0.008328813128173351', '0.002253362676128745']
+Reconstruction Loss 0.005453757866254433
+per_obj_mse: ['0.008433130569756031', '0.0024743846151977777']
+cuda
+Namespace(action_dim=15, baseline=True, batch_size=128, copy_action=False, cuda=True, dataset='narma_2d_2_n0.csv', dec_epochs=0, decoder=False, decoder_gl=1.0, decoder_l1=1.0, dropout=0.0, embedding_dim=40, epochs=0, forecasting_M5=False, forecasting_cl=False, full=True, futureControlOnly=False, gl=1.0, hard_decoder=False, hidden_dim=512, hierarchical_ls=False, horizon=100, ignore_action=False, isControl=False, l1=1.0, layer_gl=False, layer_l1=False, learning_rate=0.001, length=11, log_interval=20, message_l1=1.0, message_pass=False, name='B+SC', no_cuda=False, nodes=2, noise=False, normalize=False, num_cont=2, num_objects=2, onlyReLU=False, ood=True, pastControlOnly=False, pastStateOnly=False, pastinfo=False, path='/data/pankaj/CLTS//data/narma/combgen/6/test_ood_alpha_0.0_0.1/', per_node_MLP=False, pert=None, recurrent=False, save_embeddings=False, save_folder='/data/pankaj/CLTS/output/CombGen/5Aug2020_NARMA_2D_S1_4_data6_spur_corr_400epochs_train_alpha_0.4_0.7_B_4L/narma_2d_2_n0.csv', save_interval=20, save_predictions=False, seed=42, sepCTRL=True, setup=1, shift=10, shuffle=True, sigma=0.5, soft_decoder_gl=False, soft_decoder_l1=False, split=0.75, steps=1, stride=1, use_condenser=False, window_size=11)
+(7989, 2, 11)
+(1989, 2, 11)
+Data loaded!
+MVTS(
+  (control_CNN_0): CNN_Extractor_cont(
+    (dropoutlayer): Dropout(p=0.0)
+    (CNN): Sequential(
+      (0): Conv1d(1, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 1, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(1, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (control_CNN_1): CNN_Extractor_cont(
+    (dropoutlayer): Dropout(p=0.0)
+    (CNN): Sequential(
+      (0): Conv1d(1, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 1, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(1, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (state_CNN): CNN_Extractor(
+    (CNN): Sequential(
+      (0): Conv1d(2, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 2, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(2, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (state_LSTM): LSTM(11, 40)
+  (control_LSTM_0): LSTM(11, 40)
+  (control_LSTM_1): LSTM(11, 40)
+  (extract_state): Sequential(
+    (0): Linear(in_features=40, out_features=11, bias=True)
+    (1): Tanh()
+  )
+  (transition_model): Sequential(
+    (0): Linear(in_features=160, out_features=160, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=160, out_features=80, bias=True)
+    (3): Tanh()
+  )
+  (decoder): Linear(in_features=80, out_features=2, bias=True)
+  (MSE): MSELoss()
+)
+Starting model training...
+Reconstruction Loss 0.008987673451085467
+per_obj_mse: ['0.01426358800381422', '0.0037117572501301765']
+Reconstruction Loss 0.009336364410102157
+per_obj_mse: ['0.014539291150867939', '0.004133440088480711']
+cuda
+Namespace(action_dim=15, baseline=True, batch_size=128, copy_action=False, cuda=True, dataset='narma_2d_2_n0.csv', dec_epochs=0, decoder=False, decoder_gl=1.0, decoder_l1=1.0, dropout=0.0, embedding_dim=40, epochs=0, forecasting_M5=False, forecasting_cl=False, full=True, futureControlOnly=False, gl=1.0, hard_decoder=False, hidden_dim=512, hierarchical_ls=False, horizon=140, ignore_action=False, isControl=False, l1=1.0, layer_gl=False, layer_l1=False, learning_rate=0.001, length=11, log_interval=20, message_l1=1.0, message_pass=False, name='B+SC', no_cuda=False, nodes=2, noise=False, normalize=False, num_cont=2, num_objects=2, onlyReLU=False, ood=True, pastControlOnly=False, pastStateOnly=False, pastinfo=False, path='/data/pankaj/CLTS//data/narma/combgen/6/test_ood_alpha_0.0_0.1/', per_node_MLP=False, pert=None, recurrent=False, save_embeddings=False, save_folder='/data/pankaj/CLTS/output/CombGen/5Aug2020_NARMA_2D_S1_4_data6_spur_corr_400epochs_train_alpha_0.4_0.7_B_4L/narma_2d_2_n0.csv', save_interval=20, save_predictions=False, seed=42, sepCTRL=True, setup=1, shift=10, shuffle=True, sigma=0.5, soft_decoder_gl=False, soft_decoder_l1=False, split=0.75, steps=1, stride=1, use_condenser=False, window_size=11)
+(7985, 2, 11)
+(1985, 2, 11)
+Data loaded!
+MVTS(
+  (control_CNN_0): CNN_Extractor_cont(
+    (dropoutlayer): Dropout(p=0.0)
+    (CNN): Sequential(
+      (0): Conv1d(1, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 1, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(1, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (control_CNN_1): CNN_Extractor_cont(
+    (dropoutlayer): Dropout(p=0.0)
+    (CNN): Sequential(
+      (0): Conv1d(1, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 1, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(1, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (state_CNN): CNN_Extractor(
+    (CNN): Sequential(
+      (0): Conv1d(2, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 2, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(2, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): Tanh()
+    )
+  )
+  (state_LSTM): LSTM(11, 40)
+  (control_LSTM_0): LSTM(11, 40)
+  (control_LSTM_1): LSTM(11, 40)
+  (extract_state): Sequential(
+    (0): Linear(in_features=40, out_features=11, bias=True)
+    (1): Tanh()
+  )
+  (transition_model): Sequential(
+    (0): Linear(in_features=160, out_features=160, bias=True)
+    (1): Tanh()
+    (2): Linear(in_features=160, out_features=80, bias=True)
+    (3): Tanh()
+  )
+  (decoder): Linear(in_features=80, out_features=2, bias=True)
+  (MSE): MSELoss()
+)
+Starting model training...
+Reconstruction Loss 0.012737210130651981
+per_obj_mse: ['0.020253892987966537', '0.00522052776068449']
+Reconstruction Loss 0.01322485935693649
+per_obj_mse: ['0.02065250463783741', '0.005797217600047588']

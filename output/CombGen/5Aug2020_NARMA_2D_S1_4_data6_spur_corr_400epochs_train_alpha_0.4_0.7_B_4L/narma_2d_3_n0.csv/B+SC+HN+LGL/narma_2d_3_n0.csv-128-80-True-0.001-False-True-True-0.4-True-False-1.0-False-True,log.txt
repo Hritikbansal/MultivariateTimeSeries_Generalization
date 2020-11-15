@@ -1,0 +1,114 @@
+cuda
+Namespace(action_dim=15, baseline=False, batch_size=128, copy_action=False, cuda=True, dataset='narma_2d_3_n0.csv', dec_epochs=0, decoder=False, decoder_gl=1.0, decoder_l1=1.0, dropout=0.0, embedding_dim=80, epochs=0, forecasting_M5=False, forecasting_cl=False, full=True, futureControlOnly=False, gl=0.4, hard_decoder=False, hidden_dim=512, hierarchical_ls=True, horizon=5, ignore_action=False, isControl=False, l1=1.0, layer_gl=True, layer_l1=False, learning_rate=0.001, length=11, log_interval=20, message_l1=1.0, message_pass=False, name='B+SC+HN+LGL', no_cuda=False, nodes=2, noise=False, normalize=False, num_cont=2, num_objects=2, onlyReLU=True, ood=True, pastControlOnly=False, pastStateOnly=False, pastinfo=False, path='/data/pankaj/CLTS//data/narma/combgen/6/test_ood_alpha_0.0_0.1/', per_node_MLP=False, pert=None, recurrent=False, save_embeddings=False, save_folder='/data/pankaj/CLTS/output/CombGen/5Aug2020_NARMA_2D_S1_4_data6_spur_corr_400epochs_train_alpha_0.4_0.7_B_4L/narma_2d_3_n0.csv', save_interval=20, save_predictions=False, seed=42, sepCTRL=True, setup=1, shift=10, shuffle=True, sigma=0.5, soft_decoder_gl=False, soft_decoder_l1=False, split=0.75, steps=1, stride=1, use_condenser=False, window_size=11)
+(7999, 2, 11)
+(1999, 2, 11)
+Data loaded!
+MVTS(
+  (control_CNN_0): CNN_Extractor_cont(
+    (dropoutlayer): Dropout(p=0.0)
+    (CNN): Sequential(
+      (0): Conv1d(1, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 1, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(1, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): LeakyReLU(negative_slope=0.01)
+    )
+  )
+  (control_CNN_1): CNN_Extractor_cont(
+    (dropoutlayer): Dropout(p=0.0)
+    (CNN): Sequential(
+      (0): Conv1d(1, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 1, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(1, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): LeakyReLU(negative_slope=0.01)
+    )
+  )
+  (state_CNN): CNN_Extractor(
+    (CNN): Sequential(
+      (0): Conv1d(2, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (1): Chomp1d()
+      (2): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (3): LeakyReLU(negative_slope=0.01)
+      (4): Conv1d(8, 8, kernel_size=(5,), stride=(1,), padding=(4,))
+      (5): Chomp1d()
+      (6): BatchNorm1d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): LeakyReLU(negative_slope=0.01)
+      (8): Conv1d(8, 2, kernel_size=(5,), stride=(1,), padding=(4,))
+      (9): Chomp1d()
+      (10): BatchNorm1d(2, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (11): LeakyReLU(negative_slope=0.01)
+    )
+  )
+  (state_ReLU): Sequential(
+    (0): Linear(in_features=11, out_features=80, bias=True)
+    (1): LeakyReLU(negative_slope=0.01)
+  )
+  (control_ReLU_0): Sequential(
+    (0): Linear(in_features=11, out_features=80, bias=True)
+    (1): LeakyReLU(negative_slope=0.01)
+  )
+  (control_ReLU_1): Sequential(
+    (0): Linear(in_features=11, out_features=80, bias=True)
+    (1): LeakyReLU(negative_slope=0.01)
+  )
+  (extract_state): Sequential(
+    (0): Linear(in_features=80, out_features=11, bias=True)
+    (1): LeakyReLU(negative_slope=0.01)
+  )
+  (transition_model): Hierarchical_ls(
+    (first_stage_0_0): first_stage(
+      (net): Sequential(
+        (0): Linear(in_features=160, out_features=80, bias=True)
+        (1): LeakyReLU(negative_slope=0.01)
+      )
+    )
+    (first_stage_0_1): first_stage(
+      (net): Sequential(
+        (0): Linear(in_features=160, out_features=80, bias=True)
+        (1): LeakyReLU(negative_slope=0.01)
+      )
+    )
+    (first_stage_1_0): first_stage(
+      (net): Sequential(
+        (0): Linear(in_features=160, out_features=80, bias=True)
+        (1): LeakyReLU(negative_slope=0.01)
+      )
+    )
+    (extract_state_ls_0): extract_state_ls(
+      (net): Sequential(
+        (0): Linear(in_features=160, out_features=80, bias=True)
+        (1): LeakyReLU(negative_slope=0.01)
+      )
+    )
+    (first_stage_1_1): first_stage(
+      (net): Sequential(
+        (0): Linear(in_features=160, out_features=80, bias=True)
+        (1): LeakyReLU(negative_slope=0.01)
+      )
+    )
+    (extract_state_ls_1): extract_state_ls(
+      (net): Sequential(
+        (0): Linear(in_features=160, out_features=80, bias=True)
+        (1): LeakyReLU(negative_slope=0.01)
+      )
+    )
+  )
+  (decoder): Linear(in_features=160, out_features=2, bias=True)
+  (MSE): MSELoss()
+)
+Starting model training...
