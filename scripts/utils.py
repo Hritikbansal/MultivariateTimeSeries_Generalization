@@ -807,7 +807,7 @@ def IsOODNarma( control ):
 	flag = True
 
 	for j in range(control.shape[1]):
-		if (not ((control[1][j] > 0.4*control[0][j] + 0.6) or (control[1][j] < 0.4*control[0]))):
+		if (not ((control[1][j] > 0.4*control[0][j] + 0.6) or (control[1][j] < 0.4*control[0][j]))):
 			flag = False
 			break
 
@@ -848,7 +848,7 @@ def createNarmaDataset(path, window_length, horizon, num_cont, num_objects, shif
 			future_control_time_series.append(control[:,i*shift+window_length:i*shift+total])
 		
 		else:
-			if(IsOODNarma(control[:, i*shift:i*shift+total])):
+			if(IsOODNarma(control[:, i*shift+window_length:i*shift+total])):
 				state_time_series.append(state[:,i*shift:i*shift+window_length])
 				control_time_series.append(control[:,i*shift:i*shift+window_length])
 				future_state_time_series.append(state[:,i*shift+window_length:i*shift+total])
