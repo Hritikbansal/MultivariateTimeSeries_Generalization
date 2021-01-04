@@ -5,6 +5,8 @@ from torch import nn
 import sys
 import torch.nn.functional as F
 
+'''__author__  Hritik Bansal'''
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 def time_pad_representations(states, window_size, num_objects):
@@ -752,7 +754,6 @@ class MLP_transition(nn.Module):
 
 		return torch.cat(updated, dim=1)
 
-'''__author__  Hritik Bansal'''
 
 class RNN_transition(nn.Module):
 	def __init__(self, input_size, hidden_size, num_layers=1):

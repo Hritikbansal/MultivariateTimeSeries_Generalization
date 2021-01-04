@@ -113,8 +113,8 @@ parser.add_argument('--horizon', type=int, default=100,
 parser.add_argument('--steps', type=int, default=1,
 					help='Number of steps.')
 
-parser.add_argument('--setup', type=int, default=1,
-					help='swat 1/2.')
+parser.add_argument('--setup', type=int, default=0,
+					help='different setups for swat/narma')
 
 parser.add_argument('--use_condenser', type=bool, default=False,
 					help='using condensery.')
@@ -141,9 +141,12 @@ parser.add_argument('--save_interval', type=int, default=20,
 parser.add_argument('--dataset', type=str,
 					default='swat', required=True,
 					help='Name of the dataset')
+parser.add_argument('--file_name', type=str,
+					default='PMSM_cont_iid.csv', help='PMSM dataset file')
+
 parser.add_argument('--name', type=str, default='MVTS',
 					help='Experiment name.')
-parser.add_argument('--save-folder', type=str,
+parser.add_argument('--save_folder', type=str,
 					default='checkpoints',
 					help='Path to checkpoints.')
 
@@ -180,9 +183,9 @@ if args.name == 'none':
 else:
 	exp_name = args.name
 
-np.random.seed(args.seed)
+np.random.seed(42)
 torch.manual_seed(args.seed)
-random.seed(args.seed)
+random.seed(42)
 if args.cuda:
 	torch.cuda.manual_seed(args.seed)
 	torch.backends.cudnn.deterministic = True
@@ -200,14 +203,14 @@ if not os.path.exists(save_folder):
 
 
 def _init_fn():
-	np.random.seed(args.seed)
+	np.random.seed(42)
 
 
 '''used_params='-'.join([args.dataset, str(args.l1), str(args.message_l1), str(args.length),str(args.window_size),str(args.embedding_dim),str(args.nodes),str(args.decoder),str(args.shift),
 				str(5),str(args.dropout),str(args.message_pass),str(args.isControl),str(args.sepCTRL),
 				str(args.stride),str(args.full),str(args.baseline), str(args.forecasting_cl), str(args.forecasting_M5)])'''
 
-used_params='-'.join([args.dataset, str(args.batch_size), str(args.embedding_dim),str(args.full),str(args.learning_rate),str(args.baseline), str(args.sepCTRL),str(args.layer_gl), str(args.gl),str(args.hierarchical_ls),str(args.soft_decoder_gl),str(args.decoder_gl),str(args.hard_decoder)]) #,str(args.onlyReLU)])
+used_params='-'.join([args.dataset, str(args.batch_size), str(args.embedding_dim),str(args.full),str(args.learning_rate),str(args.baseline), str(args.sepCTRL),str(args.layer_gl), str(args.gl),str(args.hierarchical_ls),str(args.soft_decoder_gl),str(args.decoder_gl),str(args.hard_decoder), str(args.seed)]) #,str(args.onlyReLU)])
 
 
 meta_file = os.path.join(save_folder, used_params+',metadata.pkl')
@@ -251,18 +254,18 @@ elif(args.dataset=='swat'):
 		horizon=args.horizon, shift=args.shift, 
 		shuffle_data=args.shuffle,train=False,steps=args.steps,setup=args.setup)
 elif('narma' in args.dataset):
-	data_path=args.path + args.dataset
+	data_path=args.path + args.file_name
 	state_past, cont_past, action, next_obs = utils.createNarmaDataset(path=data_path, window_length=args.length, 
 		horizon=args.horizon, num_cont=args.num_cont, num_objects=args.num_objects, shift=args.shift, 
-		shuffle_data=args.shuffle, train=True)
+		shuffle_data=args.shuffle, train=True, setup = args.setup)
 	test_state_past, test_cont_past, test_action, test_next_obs = utils.createNarmaDataset(path=data_path, window_length=args.length, 
 		horizon=args.horizon, num_cont=args.num_cont, num_objects=args.num_objects, shift=args.shift, 
-		shuffle_data=args.shuffle,train=False)
+		shuffle_data=args.shuffle,train=False, setup = args.setup)
 	print(state_past.shape)
 	print(test_state_past.shape)
 
-elif('pmsm' in args.dataset):
-	data_path = args.path 
+elif('PMSM' in args.dataset):
+	data_path = args.path + args.file_name
 	state_past, cont_past, action, next_obs = utils.createPMSMDataset(path=data_path, window_length=args.length, 
 		horizon=args.horizon, num_cont=args.num_cont, num_objects=args.num_objects, shift=args.shift, 
 		shuffle_data=args.shuffle, train=True)
@@ -322,7 +325,7 @@ elif('narma' in args.dataset):
 		action[int(train_split*int(state_past.shape[0])):], next_obs[int(train_split*int(state_past.shape[0])):])
 	test_dataset = utils.NarmaDataset(test_state_past, test_cont_past, test_action, test_next_obs)
 
-elif('pmsm' in args.dataset):
+elif('PMSM' in args.dataset):
 	train_dataset = utils.PMSMDataset(state_past[0:int(train_split*state_past.shape[0])], cont_past[0:int(train_split*state_past.shape[0])], 
 		action[0:int(train_split*state_past.shape[0])], next_obs[0:int(train_split*state_past.shape[0])])
 	validation_dataset = utils.PMSMDataset(state_past[int(train_split*int(state_past.shape[0])):], cont_past[int(train_split*int(state_past.shape[0])):], 
@@ -365,7 +368,6 @@ model = mts_model.MVTS(
 	hard_decoder=args.hard_decoder,
 	onlyReLU=args.onlyReLU).to(device)
 
-model.apply(utils.weights_init)
 print(model)
 
 optimizer = torch.optim.Adam(
@@ -590,12 +592,12 @@ def save_results():
 	for test in test_results:
 		results.append(test)
 	if args.ood:
-		save_file_name = save_folder+used_params+'numbers_test_ood.csv'
+		save_file_name = save_folder+used_params+'_numbers_test_ood.csv'
 	else:
-		save_file_name = save_folder+used_params+'numbers_iid.csv'
+		save_file_name = save_folder+used_params+'_numbers_iid.csv'
 	with open(save_file_name,'a') as f:
 		f.write(','.join([str(res) for res in results]))
-		f.write('\n')
+		f.write('\n \n')
 
 if args.noise:
 	model.load_state_dict(torch.load(model_file))
@@ -620,7 +622,7 @@ if args.noise:
 else:
 	#model.load_state_dict(torch.load(model_file))
 	train_forecasting(model, args)
-	model.load_state_dict(torch.load(model_file,map_location=torch.device('cpu')))
+	model.load_state_dict(torch.load(model_file))
 	save_results()
 	
 	
