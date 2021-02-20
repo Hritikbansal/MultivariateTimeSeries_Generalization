@@ -1,6 +1,6 @@
 # MultivariateTimeSeries_Generalization
 
-This repository is an implementation of the paper - ```Systematic Generalization for Prediction Control in MultiVariate Time Series``` ([arxiv](https://arxiv.org/abs/2102.05602)).
+This repository is an implementation of the paper - **Systematic Generalization for Prediction Control in MultiVariate Time Series** ([arxiv](https://arxiv.org/abs/2102.05602)).
 
 ## Authors
 1. [Hritik Bansal](https://sites.google.com/view/hbansal)
