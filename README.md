@@ -6,7 +6,7 @@ This repository is an implementation of the paper - **Systematic Generalization 
 1. [Hritik Bansal](https://sites.google.com/view/hbansal)
 2. [Gantavya Bhatt](https://sites.google.com/view/gbhatt/)
 3. [Pankaj Malhotra](https://scholar.google.co.in/citations?user=HP4M0MkAAAAJ&hl=en)
-4. [Prathosh A.P.]()
+4. [Prathosh A.P.](https://sites.google.com/view/prathosh)
 
 
 ## Dataset
@@ -25,6 +25,4 @@ You can find the raw data to train and test (out-of-distribution testing) the mo
 
 Raw data corresponding to PMSM described in the paper is present in [data/pmsm/](data/pmsm/). 
 
-```GEM_PMSM.ipynb``` is the data-generating notebook which is taken from GEM [repository](https://github.com/upb-lea/gym-electric-motor).
-
-
+```GEM_PMSM.ipynb``` is the data-generating notebook which is taken from GEM [repository](https://github.com/upb-lea/gym-electric-motor)
