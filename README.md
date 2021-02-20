@@ -11,6 +11,9 @@ This repository is an official pytorch implementation of the paper - **Systemati
 
 You can use anaconda (python library manager) or pip. We used anaconda, and downloaded all the dependencies in an anaconda environment.
 
+We trained our models using High Performance Computing (HPC) facility provided by IIT Delhi. 
+
+
 ## Authors
 1. [Hritik Bansal](https://sites.google.com/view/hbansal)
 2. [Gantavya Bhatt](https://sites.google.com/view/gbhatt/)
@@ -22,7 +25,7 @@ You can use anaconda (python library manager) or pip. We used anaconda, and down
 
 Source code to run our experiments are present in [src](src/).
 
-```master_script.sh``` in both [narma](src/narma/) and [pmsm](src/pmsm) folders would indicate actual runs of the experiments for 10 random seeds. This script differs slightly for these datasets as certain experiments (such as **intervention testing (noise sensitivity here)**) are exclusive to those datasets.
+```master_script.sh``` in both [narma](src/narma/) and [pmsm](src/pmsm) folders would indicate actual runs of the experiments for 10 random seeds through ```run.py```. This script differs slightly for these datasets as certain experiments (such as **intervention testing (noise sensitivity here)**) are exclusive to those datasets.
 
 
 ## Dataset
@@ -43,11 +46,7 @@ You can find the raw data to train and test (systematic generalization testing) 
 
 Raw data corresponding to PMSM described in the paper is present in [data/pmsm/](data/pmsm/). 
 
-```GEM_PMSM.ipynb``` is the data-generating notebook which is taken from GEM [repository](https://github.com/upb-lea/gym-electric-motor)
-
-
-
-
+```GEM_PMSM.ipynb``` is the data-generating notebook which is taken from GEM [repository](https://github.com/upb-lea/gym-electric-motor).
 
 #### Note
 
