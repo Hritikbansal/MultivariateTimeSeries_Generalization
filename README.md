@@ -11,6 +11,8 @@ This repository is an implementation of the paper - **Systematic Generalization 
 
 ## Dataset
 
+Below we present the raw time series files along with their data generating sources. The files are used to create temporal segments that are created on-the-fly while running the code.
+
 ### NARMA 
 
 In the paper, we describe four NARMA scenarios. 

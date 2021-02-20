@@ -72,7 +72,7 @@ else:
 '''
 Arguments pertaining to L1 or group lasso
 
-1. Within hidden layers (only applicable to M5 and M9 only)
+1. Within hidden layers (only applicable to structured latent transition models)
 --layer_l1 : Sets L1
 --l1 : hyperparameter that goes with --layer_l1
 --layer_gl : Sets group lasso
@@ -81,9 +81,9 @@ Arguments pertaining to L1 or group lasso
 2. Decoder side 
 --soft_decoder_l1 : Sets L1 (applicable to all) 
 --decoder_l1 : hyperparameter that goes with --soft_decoder_l1
---soft_decoder_gl : Sets group lasso (applicable to M5 and M9 only)
+--soft_decoder_gl : Sets group lasso (only applicable to structured latent transition models)
 --decoder_gl : hyperparameter that goes with --soft_decoder_gl
---hard_decoder : No L1 or group lasso (applicable to M5 and M9 only)
+--hard_decoder : No L1 or group lasso (only applicable to structured latent transition models)
 
 B: Baseline, GL: Group LASSO, SC: Separate Control, O: Ours, HD: Hard Decoder, HN: Hard Nodes
 
