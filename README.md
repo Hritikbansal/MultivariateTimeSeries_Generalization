@@ -17,9 +17,14 @@ In the paper, we describe four NARMA scenarios.
 
 You can find the raw data to train and test (out-of-distribution testing) the models in [data/narma/6](data/narma/6/).
 
-```narma_2d_i_n0.csv``` contains the data for i^{th} Scenario. 
+```narma_2d_i_n0.csv``` contains the data for i<sup>th</sup> Scenario. 
 
 ```TimeSynthCombGen-spurious_corr.zip``` in [data/narma/6](data/narma/6/) contains the data generating scripts, which have been taken from TimeSynth [repository](https://github.com/TimeSynth/TimeSynth).
 
 ### Permanent Magnet Synchronous Motor (PMSM)
+
+Raw data corresponding to PMSM described in the paper is present in [data/pmsm/](data/pmsm/). 
+
+```GEM_PMSM.ipynb``` is the data-generating notebook which is taken from GEM [repository](https://github.com/upb-lea/gym-electric-motor).
+
 
