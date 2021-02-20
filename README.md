@@ -1,6 +1,15 @@
 # MultivariateTimeSeries_Generalization
 
-This repository is an implementation of the paper - **Systematic Generalization for Prediction Control in MultiVariate Time Series** ([arxiv](https://arxiv.org/abs/2102.05602)).
+This repository is an official pytorch implementation of the paper - **Systematic Generalization for Prediction Control in MultiVariate Time Series** ([arxiv](https://arxiv.org/abs/2102.05602)).
+
+## Requirements
+
+- python 3
+- pytorch >= 1.1
+- numpy 
+- matplotlib 
+
+You can use anaconda (python library manager) or pip. We used anaconda, and downloaded all the dependencies in an anaconda environment.
 
 ## Authors
 1. [Hritik Bansal](https://sites.google.com/view/hbansal)
