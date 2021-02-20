@@ -9,3 +9,17 @@ This repository is an implementation of the paper - **Systematic Generalization 
 4. [Prathosh A.P.]()
 
 
+## Dataset
+
+### NARMA 
+
+In the paper, we describe four NARMA scenarios. 
+
+You can find the raw data to train and test (out-of-distribution testing) the models in [data/narma/6](data/narma/6/).
+
+```narma_2d_i_n0.csv``` contains the data for i^{th} Scenario. 
+
+```TimeSynthCombGen-spurious_corr.zip``` in [data/narma/6](data/narma/6/) contains the data generating scripts, which have been taken from TimeSynth [repository](https://github.com/TimeSynth/TimeSynth).
+
+### Permanent Magnet Synchronous Motor (PMSM)
+
