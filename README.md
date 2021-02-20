@@ -15,7 +15,7 @@ This repository is an implementation of the paper - **Systematic Generalization 
 
 In the paper, we describe four NARMA scenarios. 
 
-You can find the raw data to train and test (out-of-distribution testing) the models in [data/narma/6](data/narma/6/).
+You can find the raw data to train and test (systematic generalization testing) the models in [data/narma/6](data/narma/6/).
 
 ```narma_2d_i_n0.csv``` contains the data for i<sup>th</sup> Scenario. 
 

@@ -5,6 +5,8 @@ from torch import nn
 import sys
 import torch.nn.functional as F
 
+'''__author__  Hritik Bansal'''
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 def time_pad_representations(states, window_size, num_objects):
@@ -44,7 +46,7 @@ class MVTS(nn.Module):
 				 num_objects, num_cont, tau, dropout, window=50, final_nodes=None, num_layers=1, action_dim=None, use_condenser=False, use_GNN=False
 				, remove_factored=False, steps=1, normalize=False,per_node_MLP=False, sepCTRL=False, full=False, isControl=False, stride=1
 				, baseline = False, forecasting_cl = False, forecasting_M5=False, pastinfo=False,only=False, recurrent=True, hierarchical_ls = False
-				, soft_decoder=False, hard_decoder=False):
+				, soft_decoder=False, hard_decoder=False, onlyReLU=False):
 		super(MVTS, self).__init__()
 
 		self.input_dim = input_dim
@@ -70,6 +72,7 @@ class MVTS(nn.Module):
 		self.pastinfo = pastinfo
 		self.only=only
 		self.recurrent = recurrent
+		self.onlyReLU = onlyReLU
 		if final_nodes==None:
 			self.final_nodes=self.num_cont
 		else:
@@ -85,13 +88,11 @@ class MVTS(nn.Module):
 
 		if(self.sepCTRL):
 			for i in range(self.num_cont):
-				setattr(self,'control_CNN_{}'.format(i),CNN_Extractor_cont(self.num_cont, self.num_objects, self.num_cont, self.dropout, self.stride, self.sepCTRL))
+				setattr(self,'control_CNN_{}'.format(i),CNN_Extractor_cont(self.num_cont, self.num_objects, self.num_cont, self.dropout, self.stride, self.sepCTRL, self.onlyReLU))
 		else:
-			self.control_CNN = CNN_Extractor_cont(self.num_cont, self.num_objects, self.final_nodes, self.dropout, self.stride, self.sepCTRL)
+			self.control_CNN = CNN_Extractor_cont(self.num_cont, self.num_objects, self.final_nodes, self.dropout, self.stride, self.sepCTRL, self.onlyReLU)
 
-		# self.state_CNN = CNN_Extractor(self.num_objects, self.num_cont, self.stride)  
-		for i in range(self.num_objects):
-			setattr(self, 'state_CNN_{}'.format(i), CNN_Extractor(self.num_objects, self.num_cont, self.stride))
+		self.state_CNN = CNN_Extractor(self.num_objects, self.num_cont, self.stride, self.onlyReLU)  
 
 		if self.use_condenser:
 			self.CondenserMLP = nn.Linear(
@@ -101,21 +102,39 @@ class MVTS(nn.Module):
 			self.action_dim  = self.embedding_dim
 
 		######### adaptive size evaluation #########################################
-		example = torch.randn(1, 1, self.window_size)
-		self.hidden_dim= self.state_CNN_0(example).size(-1)        
+		example = torch.randn(1, self.num_objects, self.window_size)
+		self.hidden_dim= self.state_CNN(example).size(-1)        
 		self.adaptive_dim = self.hidden_dim
 		####################################################################
-
-		# self.state_LSTM  = nn.LSTM(input_size=self.hidden_dim, hidden_size=self.embedding_dim, num_layers=self.num_layers)
-		# Separate encoder for states
-		for i in range(self.num_objects):
-			setattr(self, 'state_LSTM_{}'.format(i), nn.LSTM(input_size=self.hidden_dim, hidden_size=self.embedding_dim, num_layers=self.num_layers))
+		if self.onlyReLU:
+			#self.state_Linear = nn.Linear(self.hidden_dim, self.embedding_dim)
+			self.state_ReLU = nn.Sequential(nn.Linear(self.hidden_dim, self.embedding_dim),nn.LeakyReLU())
+		else:
+			self.state_LSTM  = nn.LSTM(input_size=self.hidden_dim, hidden_size=self.embedding_dim, num_layers=self.num_layers)
 		if(self.sepCTRL):
 			for i in range(self.num_cont):
-				setattr(self, 'control_LSTM_{}'.format(i), nn.LSTM(input_size=self.hidden_dim, hidden_size=self.embedding_dim, num_layers=self.num_layers))
+				if self.onlyReLU:
+					#setattr(self, 'control_Linear_{}'.format(i),nn.Linear(self.hidden_dim, self.embedding_dim))
+					setattr(self, 'control_ReLU_{}'.format(i),nn.Sequential(nn.Linear(self.hidden_dim, self.embedding_dim),nn.LeakyReLU()))
+				else:
+					setattr(self, 'control_LSTM_{}'.format(i), nn.LSTM(input_size=self.hidden_dim, hidden_size=self.embedding_dim, num_layers=self.num_layers))
 		else:
-			self.control_LSTM = nn.LSTM(input_size=self.hidden_dim, hidden_size=self.embedding_dim, num_layers=self.num_layers)
+			if self.onlyReLU:
+				#self.control_Linear = nn.Linear(self.hidden_dim, self.embedding_dim)
+				self.control_ReLU = nn.Sequential(nn.Linear(self.hidden_dim, self.embedding_dim),nn.LeakyReLU())
+			else:
+				self.control_LSTM = nn.LSTM(input_size=self.hidden_dim, hidden_size=self.embedding_dim, num_layers=self.num_layers)
 
+		if(isControl):
+			if self.onlyReLU:
+				self.extract_state = nn.Sequential(nn.Linear(2*self.embedding_dim, self.hidden_dim),nn.LeakyReLU())
+			else:
+				self.extract_state = nn.Sequential(nn.Linear(2*self.embedding_dim, self.hidden_dim),nn.Tanh())
+		else:
+			if self.onlyReLU:
+				self.extract_state = nn.Sequential(nn.Linear(self.embedding_dim, self.hidden_dim),nn.LeakyReLU())
+			else:
+				self.extract_state = nn.Sequential(nn.Linear(self.embedding_dim, self.hidden_dim),nn.Tanh())
 
 		if self.remove_factored:
 			if(isControl):
@@ -139,7 +158,7 @@ class MVTS(nn.Module):
 				num_objects = self.num_objects,
 				nodes = self.final_nodes,
 				input_size = self.embedding_dim,
-				hidden_size = self.embedding_dim)
+				hidden_size = self.embedding_dim, onlyReLU = self.onlyReLU)
 			if(self.hard_decoder):
 				for i in range(self.num_objects):
 					setattr(self,'decoder_{}'.format(i), nn.Linear(self.embedding_dim,1))
@@ -147,9 +166,10 @@ class MVTS(nn.Module):
 				self.decoder = nn.Linear(self.final_nodes*self.embedding_dim, self.num_objects)
 
 		elif self.baseline:
+			#Pankaj 2L to 4L for B
 			self.transition_model = nn.Sequential(
-				nn.Linear(self.final_nodes*(2*self.embedding_dim), self.final_nodes*self.embedding_dim), nn.Tanh(),
-				nn.Linear(self.final_nodes*self.embedding_dim, self.final_nodes*self.embedding_dim), nn.Tanh())
+				nn.Linear(self.final_nodes*(2*self.embedding_dim), 2*self.final_nodes*self.embedding_dim), nn.LeakyReLU() if self.onlyReLU else nn.Tanh(),
+				nn.Linear(2*self.final_nodes*self.embedding_dim, self.final_nodes*self.embedding_dim), nn.LeakyReLU() if self.onlyReLU else nn.Tanh())
 			self.decoder = nn.Linear(self.final_nodes*self.embedding_dim, self.num_objects) # 1 step prediction
 
 		elif self.recurrent:
@@ -193,6 +213,7 @@ class MVTS(nn.Module):
 		return getattr(self,'transition_model_{}'.format(i))
 	def get_decoder(self,i):
 		return getattr(self,'decoder_{}'.format(i))
+
 	def get_l1_Message(self):
 		return self.transition_model.get_l1_messages()
 	def get_LSTM(self,i):
@@ -200,10 +221,19 @@ class MVTS(nn.Module):
 			return getattr(self,'control_LSTM_{}'.format(i))
 		else:
 			return self.control_LSTM
-	def get_state_LSTM(self,i):
-		return getattr(self, 'state_LSTM_{}'.format(i))
-	def get_state_CNN(self,i):
-		return getattr(self, 'state_CNN_{}'.format(i))
+
+	def get_Linear(self,i):
+		if(self.sepCTRL):
+			return getattr(self,'control_Linear_{}'.format(i))
+		else:
+			return self.control_Linear
+
+	def get_ReLU(self,i):
+		if(self.sepCTRL):
+			return getattr(self,'control_ReLU_{}'.format(i))
+		else:
+			return self.control_ReLU
+
 
 	def apply_ar(self, state_encoding):
 
@@ -215,7 +245,33 @@ class MVTS(nn.Module):
 		featureState = self.num_cont if self.baseline else self.final_nodes
 
 		for objects in range(featureState):
-			_, (h_sn, c_sn) = self.get_state_LSTM(objects)(state_encoding[:, :, objects, :], (h0, c0)) #last value of top_layer hidden unit 
+			_, (h_sn, c_sn) = self.state_LSTM(state_encoding[:, :, objects, :], (h0, c0)) #last value of top_layer hidden unit 
+			state_h.append(h_sn[-1].unsqueeze(1))  # its shape is (bsz, emb) 
+			
+		return torch.cat(state_h, dim=1)   # final shape being bsz, num_obj, emb_dim
+
+	def apply_linear(self, state_encoding):
+
+		state_h = []
+		bsz = state_encoding.shape[1] if len(state_encoding.shape)==4 else state_encoding.shape[0]
+		state_encoding = state_encoding if len(state_encoding.shape)==4 else state_encoding.unsqueeze(0)
+		featureState = self.num_cont if self.baseline else self.final_nodes
+
+		for objects in range(featureState):
+			h_sn = self.state_Linear(state_encoding[:, :, objects, :]) #last value of top_layer hidden unit 
+			state_h.append(h_sn[-1].unsqueeze(1))  # its shape is (bsz, emb) 
+			
+		return torch.cat(state_h, dim=1)   # final shape being bsz, num_obj, emb_dim
+
+	def apply_ReLU(self, state_encoding):
+
+		state_h = []
+		bsz = state_encoding.shape[1] if len(state_encoding.shape)==4 else state_encoding.shape[0]
+		state_encoding = state_encoding if len(state_encoding.shape)==4 else state_encoding.unsqueeze(0)
+		featureState = self.num_cont if self.baseline else self.final_nodes
+
+		for objects in range(featureState):
+			h_sn = self.state_ReLU(state_encoding[:, :, objects, :]) #last value of top_layer hidden unit 
 			state_h.append(h_sn[-1].unsqueeze(1))  # its shape is (bsz, emb) 
 			
 		return torch.cat(state_h, dim=1)   # final shape being bsz, num_obj, emb_dim
@@ -226,20 +282,17 @@ class MVTS(nn.Module):
 		num_objects = obs.size(1)
 
 		states, time_stamps_ = time_pad_representations(obs, self.window_size, self.num_objects)
-		state_encoding = []
 		if(time_stamps_ > 0):
-			# state_encoding =  self.state_CNN(states)
-			for i in range(self.num_objects):
-				state_cnn = self.get_state_CNN(i)
-				state_encoding.append(state_cnn(states[:,i,:].unsqueeze(1)))
-			state_encoding = torch.cat(state_encoding, dim=1)
-
+			state_encoding =  self.state_CNN(states)
 			state_encoding = get_time_representation(state_encoding, time_stamps_, bsz)
 
 		# if(isEval):
 		# 	state_encoding = predicted if time_stamps_ == 0 else torch.cat([state_encoding,predicted],dim=0)		
-
-		state_encoding = self.apply_ar(state_encoding)
+		if self.onlyReLU:
+			#state_encoding = self.apply_linear(state_encoding)
+			state_encoding = self.apply_ReLU(state_encoding)
+		else:
+			state_encoding = self.apply_ar(state_encoding)
 
 		cont_encoding = []
 		action_encoding = []
@@ -261,19 +314,28 @@ class MVTS(nn.Module):
 
 		cont_encoding = get_time_representation(cont_encoding, time_stamps, bsz) # time_stamps, bsz, num_nodes, hidden_dim
 		action_encoding = get_time_representation(action_encoding, time_stamps, bsz)
+
 		cont_h = []
 		action_h = []
-
-		h0 = torch.zeros(1, bsz, self.embedding_dim).to(device)
-		c0 = torch.zeros(1, bsz, self.embedding_dim).to(device)
 		featureControl = self.num_cont if self.baseline else self.final_nodes
-	
-		for objects in range(featureControl):
-			_, (h_cn, c_cn) = self.get_LSTM(objects)(cont_encoding[:, :, objects, :], (h0, c0)) #last value of top_layer hidden unit (bsz, embedding_dim)
-			_, (h_an, c_an) = self.get_LSTM(objects)(action_encoding[:, :, objects, :], (h0, c0))#, (h_cn[-1].unsqueeze(0), c_cn[-1].unsqueeze(0)))
-			cont_h.append(h_cn[-1].unsqueeze(1))  # its shape is (bsz, emb)  
-			action_h.append(h_an[-1].unsqueeze(1))          
-			
+		if self.onlyReLU:
+			for objects in range(featureControl):
+				#h_cn = self.get_Linear(objects)(cont_encoding[:, :, objects, :])
+				#h_an = self.get_Linear(objects)(action_encoding[:, :, objects, :])
+				h_cn = self.get_ReLU(objects)(cont_encoding[:, :, objects, :])
+				h_an = self.get_ReLU(objects)(action_encoding[:, :, objects, :])
+				cont_h.append(h_cn[-1].unsqueeze(1))  # its shape is (bsz, emb)  
+				action_h.append(h_an[-1].unsqueeze(1))          
+		else:
+			h0 = torch.zeros(1, bsz, self.embedding_dim).to(device)
+			c0 = torch.zeros(1, bsz, self.embedding_dim).to(device)	
+		
+			for objects in range(featureControl):
+				_, (h_cn, c_cn) = self.get_LSTM(objects)(cont_encoding[:, :, objects, :], (h0, c0)) #last value of top_layer hidden unit (bsz, embedding_dim)
+				_, (h_an, c_an) = self.get_LSTM(objects)(action_encoding[:, :, objects, :], (h0, c0))#, (h_cn[-1].unsqueeze(0), c_cn[-1].unsqueeze(0)))
+				cont_h.append(h_cn[-1].unsqueeze(1))  # its shape is (bsz, emb)  
+				action_h.append(h_an[-1].unsqueeze(1))          
+				
 		cont_encoding= torch.cat(cont_h, dim=1)   # final shape being bsz, num_obj, emb_dim
 		action_encoding = torch.cat(action_h, dim=1)
 
@@ -524,13 +586,13 @@ class Chomp1d(nn.Module):
 		return x[:, :, :-self.chomp_size]
 
 class CNN_Extractor(nn.Module):
-	def __init__(self, num_objects, final_nodes, stride):
+	def __init__(self, num_objects, final_nodes, stride, onlyReLU):
 		self.num_objects=num_objects
 		self.final_nodes=final_nodes
 		self.stride = stride
 		super(CNN_Extractor, self).__init__()
 		self.CNN =  nn.Sequential(
-			nn.Conv1d(1, 4*self.num_objects, kernel_size=5, stride=self.stride, padding=4),
+			nn.Conv1d(self.num_objects, 4*self.num_objects, kernel_size=5, stride=self.stride, padding=4),
 			Chomp1d(4),
 			nn.BatchNorm1d(4*self.num_objects), 
 			nn.LeakyReLU(), 
@@ -538,16 +600,16 @@ class CNN_Extractor(nn.Module):
 			Chomp1d(4),
 			nn.BatchNorm1d(4*self.num_objects), 
 			nn.LeakyReLU(),
-			nn.Conv1d(4*self.num_objects, 1, kernel_size=5, stride=self.stride, padding=4),
+			nn.Conv1d(4*self.num_objects, self.final_nodes, kernel_size=5, stride=self.stride, padding=4),
 			Chomp1d(4),
-			nn.BatchNorm1d(1), 
-			nn.Tanh())
+			nn.BatchNorm1d(self.final_nodes), 
+			nn.LeakyReLU() if onlyReLU else nn.Tanh())
 
 	def forward(self, input):
 		return self.CNN(input)
 
 class CNN_Extractor_cont(nn.Module):
-	def __init__(self, num_cont, num_objects, final_nodes, dropout, stride, sepCTRL=False):
+	def __init__(self, num_cont, num_objects, final_nodes, dropout, stride, sepCTRL=False, onlyReLU=False):
 		self.num_objects=num_objects
 		self.final_nodes=final_nodes
 		self.num_cont = num_cont 
@@ -566,7 +628,7 @@ class CNN_Extractor_cont(nn.Module):
 				nn.BatchNorm1d(4*self.num_objects), nn.LeakyReLU(),
 				nn.Conv1d(4*self.num_objects, 1, 5, stride=self.stride, padding=4),Chomp1d(4),
 				nn.BatchNorm1d(1), 
-				nn.Tanh())
+				nn.LeakyReLU() if onlyReLU else nn.Tanh())
 		else:	
 			self.CNN =  nn.Sequential(
 				nn.Conv1d(self.num_cont, 4*self.num_cont,5, stride=self.stride, padding=4), Chomp1d(4),
@@ -575,14 +637,14 @@ class CNN_Extractor_cont(nn.Module):
 				nn.BatchNorm1d(4*self.num_objects), nn.LeakyReLU(),
 				nn.Conv1d(4*self.num_objects, self.final_nodes, 5, stride=self.stride, padding=4),Chomp1d(4),
 				nn.BatchNorm1d(self.final_nodes), 
-				nn.Tanh())
+				nn.LeakyReLU() if onlyReLU else nn.Tanh())
 
 	def forward(self, input):
 		x = self.dropoutlayer(input)
 		return self.CNN(x)
 
 class Decoder(nn.Module):
-	def __init__(self, num_cont, num_objects, final_nodes, hidden_dim, embedding_dim, adaptive_dim, window_size, tau, stride, baseline,pastinfo,only=False):
+	def __init__(self, num_cont, num_objects, final_nodes, hidden_dim, embedding_dim, adaptive_dim, window_size, tau, stride, baseline,pastinfo,only=False,onlyReLU=False):
 		self.num_objects = num_objects
 		self.final_nodes = final_nodes
 		self.num_cont = num_cont
@@ -597,7 +659,7 @@ class Decoder(nn.Module):
 		self.pastinfo = pastinfo
 		self.only = only
 		self.linear1 = nn.Linear(self.embedding_dim if (self.pastinfo or self.only) else self.hidden_dim, self.hidden_dim)
-		self.act1 = nn.Tanh()
+		self.act1 = nn.LeakyReLU() if onlyReLU else nn.Tanh()
 		self.act2 = nn.LeakyReLU()
 		self.ln = nn.LayerNorm(hidden_dim)
 
@@ -692,7 +754,6 @@ class MLP_transition(nn.Module):
 
 		return torch.cat(updated, dim=1)
 
-'''__author__  Hritik Bansal'''
 
 class RNN_transition(nn.Module):
 	def __init__(self, input_size, hidden_size, num_layers=1):
@@ -724,7 +785,7 @@ CODE FOR HIERARCHICAL LATENT STRUCTURE DISCUSSED ON 16TH JULY 2020'''
 ##############################################################################
 
 class first_stage(nn.Module):
-	def __init__(self, input_size, hidden_size):
+	def __init__(self, input_size, hidden_size, onlyReLU=False):
 		super(first_stage, self).__init__()
 
 		self.input_size = 2*input_size  # One feature map from state and another from action
@@ -732,7 +793,7 @@ class first_stage(nn.Module):
 
 		self.net = nn.Sequential(
 			nn.Linear(self.input_size, self.hidden_size),
-			nn.Tanh())
+			nn.LeakyReLU() if onlyReLU else nn.Tanh())
 
 	def forward(self, input):
 		# print("First")
@@ -754,7 +815,7 @@ class first_stage(nn.Module):
 # 		return self.net(input)
 
 class extract_state_ls(nn.Module):
-	def __init__(self, nodes, hidden_size):
+	def __init__(self, nodes, hidden_size,onlyReLU=False):
 		super(extract_state_ls, self).__init__()
 
 		self.nodes = nodes
@@ -762,26 +823,27 @@ class extract_state_ls(nn.Module):
 
 		self.net = nn.Sequential(
 			nn.Linear(self.nodes*self.hidden_size, self.hidden_size),
-			nn.Tanh())
+			nn.LeakyReLU() if onlyReLU else nn.Tanh())
 
 	def forward(self, input):
 		return self.net(input)
 
 class Hierarchical_ls(nn.Module):
-	def __init__(self, num_cont, num_objects, nodes, input_size, hidden_size):
+	def __init__(self, num_cont, num_objects, nodes, input_size, hidden_size,onlyReLU=False):
 		super(Hierarchical_ls, self).__init__()
 		self.num_cont = num_cont
 		self.num_objects = num_objects
 		self.nodes = nodes
 		self.input_size = input_size
 		self.hidden_size = hidden_size
+		self.onlyReLU = onlyReLU
 
 		for i in range(self.nodes):
 			for j in range(i, self.nodes):
-				setattr(self, 'first_stage_{}_{}'.format(i,j), first_stage(input_size = self.input_size, hidden_size = self.hidden_size))
+				setattr(self, 'first_stage_{}_{}'.format(i,j), first_stage(input_size = self.input_size, hidden_size = self.hidden_size, onlyReLU = self.onlyReLU))
 				if(i!=j):
-					setattr(self, 'first_stage_{}_{}'.format(j,i), first_stage(input_size = self.input_size, hidden_size = self.hidden_size))
-			setattr(self, 'extract_state_ls_{}'.format(i), extract_state_ls(nodes = self.nodes, hidden_size = self.hidden_size))
+					setattr(self, 'first_stage_{}_{}'.format(j,i), first_stage(input_size = self.input_size, hidden_size = self.hidden_size, onlyReLU=self.onlyReLU))
+			setattr(self, 'extract_state_ls_{}'.format(i), extract_state_ls(nodes = self.nodes, hidden_size = self.hidden_size, onlyReLU = self.onlyReLU))
 
 		# for i in range(self.nodes):
 		# 	for j in range(i, self.nodes):

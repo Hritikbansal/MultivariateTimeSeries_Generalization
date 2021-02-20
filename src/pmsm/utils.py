@@ -848,7 +848,7 @@ def createNarmaDataset(path, window_length, horizon, num_cont, num_objects, shif
 			future_control_time_series.append(control[:,i*shift+window_length:i*shift+total])
 		
 		else:
-			if(IsOODNarma(control[:, i*shift+window_length:i*shift+total])):
+			if(IsOODNarma(control[:, i*shift:i*shift+total])):
 				state_time_series.append(state[:,i*shift:i*shift+window_length])
 				control_time_series.append(control[:,i*shift:i*shift+window_length])
 				future_state_time_series.append(state[:,i*shift+window_length:i*shift+total])
@@ -911,7 +911,7 @@ def load_PMSM_dataset(path):
 	data1 = np.array([])
 	data2 = np.array([])
 	for col in df.columns:
-		if(col=='u_d' or col=='u_q'):
+		if(col=='u_d' or col=='u_q'or col == 'w'):
 			if(s==0):
 				data2 = np.expand_dims(np.array(df[col][1:],dtype=np.float32), axis=1) 
 				s+=1
@@ -935,6 +935,15 @@ def load_PMSM_dataset(path):
 	train_data2 = data2[0:int(data2.shape[0]*0.8)]
 	test_data2 = data2[int(data2.shape[0]*0.8):]
 
+	# min_ = np.nanmin(train_data1, axis=0)
+	# max_ = np.nanmax(train_data1, axis=0)
+	# train_data1 = (train_data1-min_)/(max_ - min_)
+	# test_data1 = (test_data1-min_)/(max_ - min_)
+	# min_ = np.nanmin(train_data2, axis=0)
+	# max_ = np.nanmax(train_data2, axis=0)
+	# train_data2 = (train_data2-min_)/(max_ - min_)
+	# test_data2 = (test_data2-min_)/(max_ - min_)
+
 	train_data = np.concatenate((train_data1, train_data2), axis=1)
 	test_data = np.concatenate((test_data1, test_data2), axis=1)
 	train_data = np.transpose(train_data)
@@ -942,7 +951,48 @@ def load_PMSM_dataset(path):
 
 	return train_data, test_data
 
-def createPMSMDataset(path, window_length, horizon, num_cont, num_objects, shift=1, shuffle_data=True, train=True, steps=1): #
+def isSameW( w ):
+
+	flag = True
+	for j in range(len(w) - 1):
+		if(w[j] != w[j+1]):
+			flag = False
+			break
+
+	# for j in range(len(w)):
+	# 	if( not ( 0.239 <= w[j] <= 0.259 ) ):
+	# 		flag = False
+	# 		break
+
+	return flag
+
+def is_IID_PMSM( control ):
+
+	assert(control.shape[0] == 2)
+
+	flag = True
+
+	for j in range(control.shape[1]):
+		if ((control[0][j] < 0 and control[1][j] < 0) or (control[0][j] > 0 and control[1][j] > 0)):
+			flag = False
+			break
+
+	return flag
+
+def is_OOD_PMSM( control ):
+
+	assert(control.shape[0] == 2)
+
+	flag = True
+
+	for j in range(control.shape[1]):
+		if ((control[0][j] > 0 and control[1][j] < 0) or (control[0][j] < 0 and control[1][j] > 0)):
+			flag = False
+			break
+
+	return flag
+
+def createPMSMDataset(path, window_length, horizon, num_cont, num_objects, shift=1, shuffle_data=True, train=True, ood = 0, steps=1): #
 
 	print(path)
 	train_data, test_data = load_PMSM_dataset(path=path)
@@ -958,7 +1008,8 @@ def createPMSMDataset(path, window_length, horizon, num_cont, num_objects, shift
 		sys.exit(0)
 
 	control = data[:num_cont] 
-	state = data[num_cont:num_cont+num_objects] 
+	state = data[num_cont:num_cont+num_objects]
+	w = data[num_cont + num_objects] 
 
 	total = window_length + horizon
 	num_windows = ((length-total)//shift) + 1
@@ -970,11 +1021,19 @@ def createPMSMDataset(path, window_length, horizon, num_cont, num_objects, shift
 	c = 0
 
 	for i in range(num_windows):
-		state_time_series.append(state[:,i*shift:i*shift+window_length])
-		control_time_series.append(control[:,i*shift:i*shift+window_length])
-		future_state_time_series.append(state[:,i*shift+window_length:i*shift+total])
-		future_control_time_series.append(control[:,i*shift+window_length:i*shift+total])
-
+		if(isSameW(w[i*shift : i*shift + total])):
+			if(not ood):
+				if(is_IID_PMSM(control[:, i*shift : i*shift + total])):
+					state_time_series.append(state[:,i*shift:i*shift+window_length])
+					control_time_series.append(control[:,i*shift:i*shift+window_length])
+					future_state_time_series.append(state[:,i*shift+window_length:i*shift+total])
+					future_control_time_series.append(control[:,i*shift+window_length:i*shift+total])
+			else:
+				if(is_OOD_PMSM(control[:, i*shift : i*shift + total])):
+					state_time_series.append(state[:,i*shift:i*shift+window_length])
+					control_time_series.append(control[:,i*shift:i*shift+window_length])
+					future_state_time_series.append(state[:,i*shift+window_length:i*shift+total])
+					future_control_time_series.append(control[:,i*shift+window_length:i*shift+total])
 
 	state_time_series = np.array(state_time_series)
 	control_time_series = np.array(control_time_series)

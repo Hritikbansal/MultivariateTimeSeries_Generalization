@@ -1,18 +1,16 @@
 import os, sys
-epochs=0
+
+
 dec_epochs=0
 
-
-root = '/home/hw1415904/data3/codes/2020-10-09/'
-#root = '/data/pankaj/CLTS/'
 dataset = sys.argv[1]
-#save_folder = root+'output/CombGen/7Aug2020_NARMA_2D_S1_4_data6_spur_corr_400epochs_train_alpha_0.4_0.7_B_4L_w20/'+dataset
-#save_folder = root+'output/CombGen/8Aug2020_NARMA_2D_S1_4_spur_corr_400epochs_data6_alpha_0.4_0.7_O_LGL/'+dataset
-#save_folder = root+'output/CombGen/8Aug2020_NARMA_2D_S1_4_data6_spur_corr_400epochs_train_alpha_0.4_0.7_B_4L_extractstate_ReLU/'+dataset
-save_folder = root+'output/CombGen/5Aug2020_NARMA_2D_S1_4_data6_spur_corr_400epochs_train_alpha_0.4_0.7_B_4L/'+dataset
-setup = sys.argv[2]
-exp_name = sys.argv[3]
-ood=True
+file_name = sys.argv[2]
+setup = sys.argv[3]
+exp_name = sys.argv[4]
+epochs = sys.argv[5]
+ood= int(sys.argv[6])
+seed = int(sys.argv[7])
+root = "~/scratch/gantavya/chacha/MTSG/"
 
 if dataset=='swat':
     shift=100
@@ -56,6 +54,15 @@ elif 'narma' in dataset:
     stride=1
     bsz=128
 
+elif 'PMSM' in dataset:
+    shift = 5
+    length = 10
+    window_size = 10
+    horizon = 2
+    num_objects = 2
+    num_control = 2
+    stride = 1
+    bsz = 128
 else:
     print('unknown dataset')
     exit()
@@ -85,13 +92,13 @@ B: Baseline, GL: Group LASSO, SC: Separate Control, O: Ours, HD: Hard Decoder, H
 gl=1.0
 decoder_gl=1.0
 for gnn_nodes in [num_control]:
-    for emb_dims in [40]:
+    for emb_dims in [50]:
         for p in [0.0]:
-            for h in [5]: #,20,60,100,140]:
+            for h in [20]:#10, 15, 20, 25, 30, 35, 40, 45, 50]: #,20,60,100,140]:
                 if ood:
-                    base_cmd="python train.py --path "+root+"/data/narma/combgen/6/test_ood_alpha_0.0_0.1/ --dataset " + dataset + " --save-folder "+save_folder+" --batch-size "+str(bsz)+" --epochs "+ str(epochs) +" --dec_epochs "+str(dec_epochs) + " --embedding_dim "+ str(emb_dims) + " --nodes "+ str(gnn_nodes) +" --shuffle --dropout " + str(p)+" --length "+str(length)+" --window_size "+str(window_size)+ " --horizon " + str(h) + " --shift "+str(shift) +" --num_objects "+str(num_objects)+" --num_cont "+str(num_control)+" --stride "+str(stride) + " --learning_rate 0.001 --full --ood " #" --onlyReLU "
+                    base_cmd="python train.py --path "+ root+ "data/pmsm/ --file_name " + file_name + " --dataset " + dataset + " --save_folder . --batch-size "+str(bsz)+" --epochs "+ str(epochs) +" --dec_epochs "+str(dec_epochs) + " --embedding_dim "+ str(emb_dims) + " --nodes "+ str(gnn_nodes) +" --shuffle --dropout " + str(p)+" --length "+str(length)+" --window_size "+str(window_size)+ " --horizon " + str(h) + " --shift "+str(shift) +" --num_objects "+str(num_objects)+" --num_cont "+str(num_control)+" --stride "+str(stride) + " --learning_rate 0.001 --full --ood --seed "+str(seed)+" --save_prediction " #" --onlyReLU "
                 else:
-                    base_cmd="python train.py --path "+root+"/data/narma/combgen/6/train_test_iid_alpha_0.4_0.7/ --dataset " + dataset + " --save-folder "+save_folder+" --batch-size "+str(bsz)+" --epochs "+ str(epochs) +" --dec_epochs "+str(dec_epochs) + " --embedding_dim "+ str(emb_dims) + " --nodes "+ str(gnn_nodes) +" --shuffle --dropout " + str(p)+" --length "+str(length)+" --window_size "+str(window_size)+ " --horizon " + str(h) + " --shift "+str(shift) +" --num_objects "+str(num_objects)+" --num_cont "+str(num_control)+" --stride "+str(stride) + " --learning_rate 0.001 --full " #--onlyReLU " # --onlyReLU
+                    base_cmd="python train.py --path "+ root + "data/pmsm/ --file_name " + file_name + " --dataset " + dataset + " --save_folder . --batch-size "+str(bsz)+" --epochs "+ str(epochs) +" --dec_epochs "+str(dec_epochs) + " --embedding_dim "+ str(emb_dims) + " --nodes "+ str(gnn_nodes) +" --shuffle --dropout " + str(p)+" --length "+str(length)+" --window_size "+str(window_size)+ " --horizon " + str(h) + " --shift "+str(shift) +" --num_objects "+str(num_objects)+" --num_cont "+str(num_control)+" --stride "+str(stride) + " --learning_rate 0.001 --full --seed "+str(seed)+" " #" --onlyReLU "
                 if exp_name=='B':
                     os.system(base_cmd + "--name B --baseline")
                 elif exp_name=='O-HN-GL' or exp_name=='B+SC':
