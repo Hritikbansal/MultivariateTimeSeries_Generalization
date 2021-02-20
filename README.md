@@ -9,6 +9,13 @@ This repository is an implementation of the paper - **Systematic Generalization 
 4. [Prathosh A.P.](https://sites.google.com/view/prathosh)
 
 
+## Experiments and Models
+
+Source code to run our experiments are present in [src](src/).
+
+```master_script.sh``` in both [narma](src/narma/) and [pmsm](src/pmsm) folders would indicate actual runs of the experiments for 10 random seeds. This script differs slightly for these datasets as certain experiments (such as **intervention testing (noise sensitivity here)**) are exclusive to those datasets.
+
+
 ## Dataset
 
 Below we present the raw time series files along with their data generating sources. The files are used to create temporal segments that are created on-the-fly while running the code.
@@ -28,3 +35,11 @@ You can find the raw data to train and test (systematic generalization testing) 
 Raw data corresponding to PMSM described in the paper is present in [data/pmsm/](data/pmsm/). 
 
 ```GEM_PMSM.ipynb``` is the data-generating notebook which is taken from GEM [repository](https://github.com/upb-lea/gym-electric-motor)
+
+
+
+
+
+#### Note
+
+As this paper is a result of a lot of experiments and architectural tweaks, you might observe that the codes contain a lot more material than presented in the paper. We shall either remove those pieces with time, or add relevant explanations for such pieces in the README file. 

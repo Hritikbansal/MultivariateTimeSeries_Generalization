@@ -69,7 +69,6 @@ else:
 	exit()
 
 
-
 '''
 Arguments pertaining to L1 or group lasso
 
